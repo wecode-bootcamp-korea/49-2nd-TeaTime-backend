@@ -5,6 +5,7 @@ CREATE TABLE users (
     name VARCHAR(30) NOT NULL,
     login_id VARCHAR(20) NOT NULL UNIQUE,
     password VARCHAR(200) NOT NULL,
+    email VARCHAR(30) NULL UNIQUE,
     phone_number VARCHAR(13) NOT NULL,
     point INT NULL,
     is_agree TINYINT NOT NULL,
