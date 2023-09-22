@@ -5,7 +5,7 @@ const findProducts = async (req, res) => {
   const userId = foundUser ? foundUser.id : undefined;
   const { page = 1, category = undefined, sort = 0 } = req.query;
 
-  const products = await productService.findProducts(userId, page, category, sort);
+  const products = await productService.findProducts(userId, category, sort, page);
 
   res.status(200).json({
     message: "READ_SUCCESS",
