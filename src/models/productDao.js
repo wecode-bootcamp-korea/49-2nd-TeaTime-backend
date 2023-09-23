@@ -4,21 +4,24 @@ const findProducts = async (userId, categoryQuery, sortQuery, page) => {
   return await myDataSource.query(
     `
     SELECT 
-      products.id,
-      products.name,
-      products.price,
-      (SELECT image_url FROM images WHERE images.product_id = products.id AND sort = 1) AS mainImageUrl,
-      (SELECT image_url FROM images WHERE images.product_id = products.id AND sort = 2) AS subImageUrl, 
-      discounts.rate AS discountRate,
-      CAST (products.price - discounts.rate * products.price / 100 AS SIGNED) AS discountPrice,
-      EXISTS (SELECT id FROM likes WHERE user_id = ? AND product_id = products.id) AS isLiked,
-      (SELECT COUNT(*) FROM likes WHERE product_id = products.id) AS likeCount,
-      (SELECT COUNT(*) FROM reviews WHERE product_id = products.id) AS reviewCount
+      p.id,
+      p.name,
+      p.price,
+      i1.image_url AS mainImageUrl,
+      i2.image_url AS subImageUrl, 
+      d.rate AS discountRate,
+      CAST (p.price - d.rate * p.price / 100 AS SIGNED) AS discountPrice,
+      EXISTS (SELECT id FROM likes WHERE user_id = ? AND product_id = p.id) AS isLiked,
+      (SELECT COUNT(*) FROM likes WHERE product_id = p.id) AS likeCount,
+      (SELECT COUNT(*) FROM reviews WHERE product_id = p.id) AS reviewCount
     FROM
-      products
+      products p
     LEFT JOIN 
-      discounts
-    ON discounts.id = products.discount_id
+      discounts d ON d.id = p.discount_id
+    LEFT JOIN 
+      images i1 ON i1.product_id = p.id AND i1.sort = 1
+    LEFT JOIN 
+      images i2 ON i2.product_id = p.id AND i2.sort = 2
     ${categoryQuery}
     ${sortQuery}
     LIMIT 20 OFFSET ?
@@ -33,7 +36,7 @@ const countProducts = async (categoryQuery) => {
     SELECT 
       COUNT(*)
     FROM
-      products
+      products p
     ${categoryQuery}
     `,
   );
