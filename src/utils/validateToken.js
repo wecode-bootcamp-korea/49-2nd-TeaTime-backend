@@ -2,33 +2,20 @@ const jwt = require("jsonwebtoken");
 const { userService } = require("../services");
 const { throwError } = require("../utils/throwError");
 
-const permitUrls = [
-  {
-    method: "GET",
-    endPoint: "/products",
-  },
-  {
-    method: "GET",
-    endPoint: "/products/",
-  },
-];
+const permitCheck = (method, endPoint) => {
+  const permitUrls = {
+    "/products": "GET",
+    "/products/": "GET",
+  };
 
-const permitCheck = async (method, endPoint) => {
   const pathParamIdx = endPoint.lastIndexOf("/") + 1;
-  const num = endPoint.slice(pathParamIdx);
-  if (!isNaN(parseInt(num))) endPoint = endPoint.slice(0, pathParamIdx);
+  const num = parseInt(endPoint.slice(pathParamIdx));
 
-  const isPermit = false;
-  for (let permitUrl of permitUrls) {
-    const equalMethod = permitUrl.method === method;
-    const equalEndPoint = permitUrl.endPoint === endPoint;
-    if (equalMethod && equalEndPoint) {
-      isPermit = true;
-      break;
-    }
-  }
+  if (pathParamIdx === endPoint.length) endPoint = endPoint.slice(0, pathParamIdx - 1);
 
-  return isPermit;
+  if (!isNaN(num)) endPoint = endPoint.slice(0, pathParamIdx);
+
+  return permitUrls[endPoint] === method;
 };
 
 const validateToken = async (req, res, next) => {
@@ -37,8 +24,7 @@ const validateToken = async (req, res, next) => {
 
     const isNotAccessToken = accessToken === "undefined" || !accessToken || accessToken === "null";
 
-    if (isNotAccessToken && permitCheck(req.method, req.path)) return next();
-
+    if (isNotAccessToken && permitCheck(req.method, req.originalUrl)) return next();
     if (isNotAccessToken) throwError(401, "ACCESS_TOKEN_REQUIRED");
 
     const { id } = jwt.verify(accessToken, process.env.SECRET_KEY);
