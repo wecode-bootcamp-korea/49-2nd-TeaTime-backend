@@ -80,6 +80,7 @@ const findProductByIdWithOther = async (userId, productId) => {
     LEFT JOIN
       origins o ON o.id = p.origin_id
     WHERE p.id = ?
+    LIMIT 1
     `,
     [userId, productId],
   );
@@ -94,6 +95,7 @@ const findProductById = async (productId) => {
     FROM
       products
     WHERE id = ?
+    LIMIT 1
     `,
     [productId],
   );
