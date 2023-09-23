@@ -21,7 +21,7 @@ const findProductByIdWithOther = async (req, res) => {
   const product = await productService.findProductByIdWithOther(userId, productId);
 
   res.status(200).json({
-    message: "READ_SUCCESS",
+    message: "READ_DETAIL_SUCCESS",
     data: product,
   });
 };
