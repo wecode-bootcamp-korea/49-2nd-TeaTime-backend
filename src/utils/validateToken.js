@@ -5,19 +5,26 @@ const { throwError } = require("../utils/throwError");
 const permitCheck = (method, endPoint) => {
   const permitUrls = {
     "/products": "GET",
-    "/products/": "GET",
+    "/products/:id": "GET",
   };
 
-  const pathParamIdx = endPoint.lastIndexOf("/") + 1;
-  const num = parseInt(endPoint.slice(pathParamIdx));
+  endPoint = endPoint.split("?")[0];
+  const pathIdx = endPoint.lastIndexOf("/") + 1;
+  if (pathIdx === endPoint.length) endPoint = endPoint.slice(0, pathIdx - 1);
 
-  if (pathParamIdx === endPoint.length) endPoint = endPoint.slice(0, pathParamIdx - 1);
+  const paths = endPoint.split("/");
 
-  if (!isNaN(num)) endPoint = endPoint.slice(0, pathParamIdx);
+  const parsePaths = paths.map((path) => {
+    const parseIntPath = parseInt(path);
+    return isNaN(parseIntPath) ? path : ":id";
+  });
 
-  return permitUrls[endPoint] === method;
+  const resultEndPoint = parsePaths.join("/");
+
+  return permitUrls[resultEndPoint] === method;
 };
 
+// TODO 더 고민해보기
 const validateToken = async (req, res, next) => {
   try {
     const accessToken = req.headers.authorization;
