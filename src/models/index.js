@@ -7,4 +7,5 @@ module.exports = {
   userDao,
   productDao,
   productQueryBuilder,
+  cartDao
 };
