@@ -22,7 +22,7 @@ const findProducts = async (userId, category, sort, page) => {
 const findProductByIdWithOther = async (userId, productId) => {
   const product = await productDao.findProductById(productId);
 
-  if (!product) throwError(404, "CONTENT_NOT_FOUND");
+  if (!product) throwError(404, "PRODUCT_NOT_FOUND");
 
   return await productDao.findProductByIdWithOther(userId, productId);
 };
