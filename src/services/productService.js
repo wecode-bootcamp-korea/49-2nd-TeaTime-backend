@@ -2,15 +2,19 @@ const { productDao, productQueryBuilder } = require("../models");
 const { throwError } = require("../utils/throwError");
 
 const findProducts = async (userId, category, sort, page) => {
+  if (page < 1) throwError(400, "PAGE_STARTS_FROM_ONE");
+  if (sort < 0) throwError(400, "SORT_STARTS_FROM_ZERO");
+  if (limit < 0) throwError(400, "LIMIT_STARTS_FROM_ZERO");
+
   const categoryQuery = productQueryBuilder.categoryQuery(category);
   const sortQuery = productQueryBuilder.sortQuery(sort);
 
   const products = await productDao.findProducts(userId, categoryQuery, sortQuery, page);
-  const countProducts = await productDao.countProducts(categoryQuery);
+  const total = await productDao.countProducts(categoryQuery);
 
   return {
     products,
-    dataCount: countProducts,
+    total,
   };
 };
 
