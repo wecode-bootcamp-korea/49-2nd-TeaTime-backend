@@ -2,12 +2,13 @@ const jwt = require("jsonwebtoken");
 const { userService } = require("../services");
 const { throwError } = require("../utils/throwError");
 
-const permitCheck = (method, endPoint) => {
-  const permitUrls = {
-    "/products": "GET",
-    "/products/:id": "GET",
-  };
+const permitUrls = {
+  "/products": "GET",
+  "/products/:id": "GET",
+  "/products/:id/reviews": "GET",
+};
 
+const permitCheck = (method, endPoint) => {
   endPoint = endPoint.split("?")[0];
   const pathIdx = endPoint.lastIndexOf("/") + 1;
   if (pathIdx === endPoint.length) endPoint = endPoint.slice(0, pathIdx - 1);
