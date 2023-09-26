@@ -1,8 +1,8 @@
-const addCartDao = require('../models/cartDao')
-const updateCountDao = require('../models/cartDao/')
-const showCartDao = require('../models/cartDao/')
-const deleteProductsDao = require('../models/cartDao/')
-const existingProductsDao = require('../models/cartDao/')
+const { addCartDao,
+        updateCountDao,
+        showCartDao,
+        deleteProductsDao,
+        existingProductsDao } = require('../models')
 
 const addCartServices = async (userId, productId) => {
     try {
