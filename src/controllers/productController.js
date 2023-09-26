@@ -26,7 +26,19 @@ const findProductByIdWithOther = async (req, res) => {
   });
 };
 
+const findProductsBest = async (req, res) => {
+  const { sort = 0 } = req.query;
+
+  const bestProducts = await productService.findProductsBest(sort);
+
+  res.status(200).json({
+    message: "READ_SUCCESS",
+    data: bestProducts,
+  });
+};
+
 module.exports = {
   findProducts,
   findProductByIdWithOther,
+  findProductsBest,
 };
