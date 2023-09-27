@@ -14,7 +14,22 @@ const categoryQuery = (category) => {
   return category != 0 && category ? `WHERE p.category_id = ${category}` : "";
 };
 
+const sortQueryForBest = (sort) => {
+  const sortObject = {
+    1: `WHERE 
+          p.created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+        ORDER BY (SELECT COUNT(*) FROM order_details WHERE product_id = p.id) DESC`,
+    2: `WHERE 
+          p.created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+        ORDER BY (SELECT COUNT(*) FROM reviews WHERE product_id = p.id) DESC`,
+    3: `ORDER BY (SELECT COUNT(*) FROM gifts g LEFT JOIN order_details o ON o.order_id = g.order_id WHERE o.product_id = p.id) DESC`,
+  };
+
+  return sortObject[sort] || `ORDER BY p.id ASC`;
+};
+
 module.exports = {
   sortQuery,
   categoryQuery,
+  sortQueryForBest,
 };
