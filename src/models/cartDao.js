@@ -1,16 +1,8 @@
 const { myDataSource } = require("./dataSource");
 
-myDataSource.initialize()
-    .then(() => {
-        console.log("Data Source has been initialized!");
-    })
-    .catch((err) => {
-        console.error("Error occurred during Data Source initialization", err);
-        myDataSource.destroy();
-    });
 const addCartDao = async (userId, productId, count) => {
-    try {
-        return await myDataSource.query(`
+
+    return await myDataSource.query(`
             INSERT INTO cart
             (
                 user_id,
@@ -22,15 +14,9 @@ const addCartDao = async (userId, productId, count) => {
                 ?,?,?
                 )
             `[userId, productId, count])
-    } catch (err) {
-        const error = new Error("Error Dao")
-        error.statusCode = 500
-        throw error
-    }
 }
-const showCartDao = async () => {
-    try {
-        return await myDataSource.query(`
+const showCartDao = async (userId) => {
+    return await myDataSource.query(`
         SELECT 
             cart.id,
             cart.product_id,
@@ -38,62 +24,39 @@ const showCartDao = async () => {
             products.name,
             products.price,
             products.id
-        FROM 
-            cart, products
-        WHERE 
-            products.id = cart.product_id;   
-        `)
-    } catch (err) {
-        const error = new Error("Error Dao")
-        error.statusCode = 500
-        throw error
-    }
+        FROM
+            cart
+        LEFT JOIN
+            products
+        ON
+            products.id = cart.product_id
+        WHERE cart.user_id = ?;   
+        `, [userId])
 }
 const discountPriceDao = async (productId) => {
-    try {
-        await myDataSource.query(`
+
+    await myDataSource.query(`
             SELECT rate FROM discounts WHERE product_id = ?
         `, [productId])
-    } catch (err) {
-        const error = new Error("Error Dao")
-        error.statusCode = 500
-        throw error
-    }
 }
 const deleteProductsDao = async (productId) => {
-    try {
-        await myDataSource.query(`
-            DELETE FROM cart WHERE product_id = ?`,
-            [productId])
-    } catch (err) {
-        const error = new Error("Error Dao")
-        error.statusCode = 500
-        throw error
-    }
+
+    await myDataSource.query(`
+            DELETE FROM cart WHERE cart_id = ?`,
+        [cartId])
 }
 const existingProductsDao = async (userId, productId) => {
-    try {
-        await myDataSource.query(`
+
+    await myDataSource.query(`
         SELECT*FROM cart WHERE user_id =? AND prduct_id =? 
         `, [userId, productId])
-    } catch (err) {
-        const error = new Error("Error Dao")
-        error.statusCode = 500
-        throw error
-    }
 }
 const updateCountDao = async (count, productId) => {
-    try {
-        await myDataSource.query(`
+
+    await myDataSource.query(`
     UPDATE cart SET count = ? WHERE id=?
     `, [count, productId])
-    } catch (err) {
-        const error = new Error("Error Dao")
-        error.statusCode = 500
-        throw error
-    }
 }
-
 module.exports = {
     addCartDao, showCartDao, discountPriceDao, deleteProductsDao, existingProductsDao, updateCountDao
 }
