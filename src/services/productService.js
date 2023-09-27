@@ -10,10 +10,18 @@ const findProducts = async (userId, category, sort, page) => {
 
   const products = await productDao.findProducts(userId, categoryQuery, sortQuery, page);
   const total = await productDao.countProducts(categoryQuery);
+  const totalConvertInt = +total;
+
+  // 쿼리문에서 형변환이 잘 안됨
+  products.forEach((product) => {
+    if (product.discountPrice) product.discountPrice = +product.discountPrice;
+    product.likeCount = +product.likeCount;
+    product.reviewCount = +product.reviewCount;
+  });
 
   return {
     products,
-    total,
+    total: totalConvertInt,
   };
 };
 
@@ -22,14 +30,28 @@ const findProductByIdWithOther = async (userId, productId) => {
   const product = await productDao.findProductById(productId);
   if (!product) throwError(404, "PRODUCT_NOT_FOUND");
 
-  return await productDao.findProductByIdWithOther(userId, productId);
+  const productByIdWithOther = await productDao.findProductByIdWithOther(userId, productId);
+  // 쿼리문에서 형변환이 잘 안됨
+  if (productByIdWithOther.discountPrice) productByIdWithOther.discountPrice = +productByIdWithOther.discountPrice;
+  productByIdWithOther.isLiked = +productByIdWithOther.isLiked;
+  productByIdWithOther.reviewCount = +productByIdWithOther.reviewCount;
+  productByIdWithOther.reviewGradeAvg = +productByIdWithOther.reviewGradeAvg;
+
+  return productByIdWithOther;
 };
 
 const findProductsBest = async (sort) => {
   if (sort < 0) throwError(400, "SORT_STARTS_FROM_ZERO");
 
   const sortQueryForBest = await productQueryBuilder.sortQueryForBest(sort);
-  return await productDao.findProductsBest(sortQueryForBest);
+  const products = await productDao.findProductsBest(sortQueryForBest);
+
+  // 쿼리문에서 형변환이 잘 안됨
+  products.forEach((product) => {
+    if (product.discountPrice) product.discountPrice = +product.discountPrice;
+  });
+
+  return products;
 };
 
 module.exports = {
