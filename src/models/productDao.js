@@ -24,9 +24,9 @@ const findProducts = async (userId, categoryQuery, sortQuery, page) => {
       images i2 ON i2.product_id = p.id AND i2.sort = 2
     ${categoryQuery}
     ${sortQuery}
-    LIMIT 20 OFFSET ?
+    LIMIT 8 OFFSET ?
     `,
-    [userId, (page - 1) * 20],
+    [userId, (page - 1) * 8],
   );
 };
 
@@ -58,6 +58,7 @@ const findProductByIdWithOther = async (userId, productId) => {
       CAST (p.price - d.rate * p.price / 100 AS SIGNED) AS discountPrice,
       EXISTS (SELECT id FROM likes WHERE user_id = ? AND product_id = p.id) AS isLiked,
       (SELECT COUNT(*) FROM reviews WHERE product_id = p.id) AS reviewCount,
+      ROUND((SELECT AVG(grade) FROM reviews WHERE product_id = p.id), 0) AS reviewGradeAvg,
       o.region
     FROM
       products p
