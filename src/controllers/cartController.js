@@ -1,16 +1,16 @@
 const { cartService } = require("../services")
 
 const addProductAtCart = async (req, res) => {
-    const { userId, cartId, productId, count } = req.body
+    const { userId, productId, count } = req.body
 
-    await cartService.addCartServices(userId, cartId, productId, count)
+    await cartService.addCartServices(userId, productId, count)
 
     res.status(200).json({ "message": "add" })
 }
 
 const delProductsAtcart = async (req, res) => {
-    const { userId, cartId, productId } = req.body
-    await cartService.deleteProductsServices(userId, cartId, productId)
+    const { cartId, productId } = req.body
+    await cartService.deleteProductsServices(cartId, productId)
 
     res.status(200).json({ "message": "delete" })
 }

@@ -15,7 +15,7 @@ const addCartDao = async (userId, productId, count) => {
                 )
             `[userId, productId, count])
 }
-const showCartDao = async (userId) => {
+const showCartDao = async (userId, cartId) => {
     return await myDataSource.query(`
         SELECT 
             cart.id,
@@ -31,7 +31,7 @@ const showCartDao = async (userId) => {
         ON
             products.id = cart.product_id
         WHERE cart.user_id = ?;   
-        `, [userId])
+        `, [userId, cartId])
 }
 const discountPriceDao = async (productId) => {
 
@@ -39,11 +39,11 @@ const discountPriceDao = async (productId) => {
             SELECT rate FROM discounts WHERE product_id = ?
         `, [productId])
 }
-const deleteProductsDao = async (productId) => {
+const deleteProductsDao = async (cartId) => {
 
     await myDataSource.query(`
-            DELETE FROM cart WHERE cart_id = ?`,
-        [cartId])
+            DELETE FROM cart WHERE cart_id = ? AND product_id`,
+        [cartId, productId])
 }
 const existingProductsDao = async (userId, productId) => {
 

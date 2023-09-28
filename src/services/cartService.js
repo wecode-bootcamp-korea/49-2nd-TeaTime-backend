@@ -15,12 +15,12 @@ const addCartServices = async (userId, productId, count) => {
         await addCartDao(userId, productId, 1)
     }
 }
-const deleteProductsServices = async (cartId) => {
-    await deleteProductsDao(cartId)
+const deleteProductsServices = async (cartId, productId) => {
+    await deleteProductsDao(cartId, productId)
 }
 
-const showCartService = async (userId) => {
-    return await showCartDao(userId)
+const showCartService = async (userId, cartId) => {
+    return await showCartDao(userId, cartId)
 }
 
 module.exports = { addCartServices, deleteProductsServices, showCartService }
