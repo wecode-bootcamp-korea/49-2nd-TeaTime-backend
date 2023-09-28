@@ -10,18 +10,10 @@ const findProducts = async (userId, category, sort, page) => {
 
   const products = await productDao.findProducts(userId, categoryQuery, sortQuery, page);
   const total = await productDao.countProducts(categoryQuery);
-  const totalConvertInt = +total;
-
-  // 쿼리문에서 형변환이 잘 안됨
-  products.forEach((product) => {
-    if (product.discountPrice) product.discountPrice = +product.discountPrice;
-    product.likeCount = +product.likeCount;
-    product.reviewCount = +product.reviewCount;
-  });
 
   return {
     products,
-    total: totalConvertInt,
+    total,
   };
 };
 
@@ -30,14 +22,7 @@ const findProductByIdWithOther = async (userId, productId) => {
   const product = await productDao.findProductById(productId);
   if (!product) throwError(404, "PRODUCT_NOT_FOUND");
 
-  const productByIdWithOther = await productDao.findProductByIdWithOther(userId, productId);
-  // 쿼리문에서 형변환이 잘 안됨
-  if (productByIdWithOther.discountPrice) productByIdWithOther.discountPrice = +productByIdWithOther.discountPrice;
-  productByIdWithOther.isLiked = +productByIdWithOther.isLiked;
-  productByIdWithOther.reviewCount = +productByIdWithOther.reviewCount;
-  productByIdWithOther.reviewGradeAvg = +productByIdWithOther.reviewGradeAvg;
-
-  return productByIdWithOther;
+  return await productDao.findProductByIdWithOther(userId, productId);
 };
 
 const findProductsBest = async (sort) => {
@@ -45,11 +30,6 @@ const findProductsBest = async (sort) => {
 
   const sortQueryForBest = await productQueryBuilder.sortQueryForBest(sort);
   const products = await productDao.findProductsBest(sortQueryForBest);
-
-  // 쿼리문에서 형변환이 잘 안됨
-  products.forEach((product) => {
-    if (product.discountPrice) product.discountPrice = +product.discountPrice;
-  });
 
   return products;
 };

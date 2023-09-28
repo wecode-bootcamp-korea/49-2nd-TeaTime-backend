@@ -58,7 +58,7 @@ const findProductByIdWithOther = async (userId, productId) => {
       CAST (p.price - d.rate * p.price / 100 AS SIGNED) AS discountPrice,
       EXISTS (SELECT id FROM likes WHERE user_id = ? AND product_id = p.id) AS isLiked,
       (SELECT COUNT(*) FROM reviews WHERE product_id = p.id) AS reviewCount,
-      ROUND((SELECT AVG(grade) FROM reviews WHERE product_id = p.id), 0) AS reviewGradeAvg,
+      CAST (ROUND ((SELECT AVG(grade) FROM reviews WHERE product_id = p.id), 0) AS SIGNED) AS reviewGradeAvg,
       o.region
     FROM
       products p

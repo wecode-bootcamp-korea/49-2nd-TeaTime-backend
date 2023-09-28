@@ -13,14 +13,10 @@ const findReviewByProductId = async (userId, productId, image, page) => {
 
   const reviews = await reviewDao.findReviewByProductId(userId, productId, whereQuery, page);
   const total = await reviewDao.countReviews(whereQueryForCount);
-  const totalConvertInt = +total;
-
-  // 쿼리문에서 형변환이 잘 안됨
-  reviews.forEach((review) => (review.isMyReview = +review.isMyReview));
 
   return {
     reviews,
-    total: totalConvertInt,
+    total,
   };
 };
 
