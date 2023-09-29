@@ -51,6 +51,9 @@ const findProductByIdWithOther = async (userId, productId) => {
       p.id,
       p.name,
       p.price,
+      p.information,
+      c.id AS categoryId,
+      c.type AS categoryName,
       i1.image_url AS mainImageUrl,
       i2.image_url AS subImageUrl, 
       i3.image_urls AS contentImageUrls, 
@@ -80,6 +83,8 @@ const findProductByIdWithOther = async (userId, productId) => {
     ) i3 ON i3.product_id = p.id
     LEFT JOIN
       origins o ON o.id = p.origin_id
+    LEFT JOIN
+      categories c ON c.id = p.category_id
     WHERE p.id = ?
     LIMIT 1
     `,
