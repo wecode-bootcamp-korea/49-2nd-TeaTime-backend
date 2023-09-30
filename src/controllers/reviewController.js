@@ -9,7 +9,7 @@ const findReviewByProductId = async (req, res) => {
   const reviews = await reviewService.findReviewByProductId(userId, productId, image, page);
 
   res.status(200).json({
-    message: "READ_REVIEW_SUCCESS",
+    message: "READ_SUCCESS",
     data: reviews,
   });
 };
