@@ -3,6 +3,7 @@ const { addCartDao,
     showCartDao,
     deleteProductsDao,
     existingProductsDao } = require('../models')
+const { throwError } = require("../utils/throwError");
 
 const addCartServices = async (userId, productId, count) => {
     const existingProducts = await existingProductsDao(userId, productId)
@@ -14,6 +15,7 @@ const addCartServices = async (userId, productId, count) => {
     } else {
         await addCartDao(userId, productId, count)
     }
+    if (!existingProducts) throwError(404,"오류 addCartServivces")
 }
 
 const showTotalPriceService = async (userId, cartId) => {
@@ -27,7 +29,10 @@ const showTotalPriceService = async (userId, cartId) => {
             const productPrice = allPriceAtCart[i].price
             total += productPrice
 
-        }
+        }  
+
+        if(!allPriceAtCart) throwError(404,"입력받은 아이디 값 카트 값 오류")
+
         return total
     }
     return calculateTotal(userId, cartId)

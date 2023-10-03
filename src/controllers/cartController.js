@@ -29,4 +29,9 @@ const showTotalPriceAtcart = async (req, res) => {
     res.status(200).json({ data: total })
 }
 
-module.exports = { addProductAtCart, delProductsAtcart, showProductsAtcart, showTotalPriceAtcart }
+module.exports = {
+    addProductAtCart,
+    delProductsAtcart,
+    showProductsAtcart,
+    showTotalPriceAtcart
+}
