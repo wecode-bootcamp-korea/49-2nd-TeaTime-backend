@@ -4,9 +4,10 @@ const { asyncWrap } = require("../utils/errorHandler");
 const { validateToken } = require("../utils/validateToken");
 const cartRouter = express.Router();
 
-cartRouter.get("/cart", validateToken, asyncWrap(cartController.showProductsAtcart));
-cartRouter.post("/cart", validateToken, asyncWrap(cartController.addProductAtCart));
-cartRouter.delete("/cart", validateToken, asyncWrap(cartController.delProductsAtcart));
+cartRouter.get("/cart/add", validateToken, asyncWrap(cartController.showProductsAtcart));
+cartRouter.get("/cart/del", validateToken, asyncWrap(cartController.showTotalPriceAtcart));
+cartRouter.post("/cart/show", validateToken, asyncWrap(cartController.addProductAtCart));
+cartRouter.delete("/cart/total", validateToken, asyncWrap(cartController.delProductsAtcart));
 
 module.exports = { cartRouter };
 

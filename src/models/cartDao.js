@@ -39,10 +39,10 @@ const discountPriceDao = async (productId) => {
             SELECT rate FROM discounts WHERE product_id = ?
         `, [productId])
 }
-const deleteProductsDao = async (cartId) => {
+const deleteProductsDao = async (cartId, productId) => {
 
     await myDataSource.query(`
-            DELETE FROM cart WHERE cart_id = ? AND product_id`,
+            DELETE FROM cart WHERE cart_id = ? AND product_id = ?`,
         [cartId, productId])
 }
 const existingProductsDao = async (userId, productId) => {

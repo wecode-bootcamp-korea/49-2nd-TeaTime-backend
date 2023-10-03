@@ -23,4 +23,10 @@ const showProductsAtcart = async (req, res) => {
     res.status(200).json({ data: cartInFo })
 }
 
-module.exports = { addProductAtCart, delProductsAtcart, showProductsAtcart }
+const showTotalPriceAtcart = async (req, res) => {
+    const { userId, cartId } = req.body
+    const total = await cartService.showTotalPriceService(userId, cartId)
+    res.status(200).json({ data: total })
+}
+
+module.exports = { addProductAtCart, delProductsAtcart, showProductsAtcart, showTotalPriceAtcart }
