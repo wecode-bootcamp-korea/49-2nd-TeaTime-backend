@@ -11,7 +11,7 @@ const sortQuery = (sort) => {
 };
 
 const categoryQuery = (category) => {
-  return category != 0 && category ? `WHERE p.category_id = ${category}` : "";
+  return category != 0 && category ? `AND p.category_id = ${category}` : "";
 };
 
 const sortQueryForBest = (sort) => {
