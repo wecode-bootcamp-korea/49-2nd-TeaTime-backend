@@ -28,6 +28,11 @@ const showTotalPriceService = async (userId) => {
     }
 }
 
+const showHowManyAtCartSevice = async (userId) => {
+    const cartItems = await cartDao.showCartDao(userId).lenght;
+    return cartItems
+}
+
 const deleteProductsServices = async (productId) => {
     await cartDao.deleteProductsDao(productId)
 }
@@ -35,4 +40,4 @@ const deleteProductsServices = async (productId) => {
 const showCartService = async (userId) => {
     return await cartDao.showCartDao(userId)
 }
-module.exports = { addCartServices, deleteProductsServices, showCartService, showTotalPriceService }
+module.exports = { addCartServices, deleteProductsServices, showCartService, showTotalPriceService, showHowManyAtCartSevice }
