@@ -1,7 +1,10 @@
 const { cartService } = require("../services")
 
+
 const addProductAtCart = async (req, res) => {
-    const { userId, productId, count } = req.body
+    const foundUser = req.foundUser;
+    const userId = foundUser ? foundUser.id : undefined;
+    const { productId, count } = req.body
 
     await cartService.addCartServices(userId, productId, count)
 
@@ -9,23 +12,26 @@ const addProductAtCart = async (req, res) => {
 }
 
 const delProductsAtcart = async (req, res) => {
-    const { cartId, productId } = req.body
-    await cartService.deleteProductsServices(cartId, productId)
+
+    const { productId } = req.body
+    await cartService.deleteProductsServices(productId)
 
     res.status(200).json({ "message": "delete" })
 }
 
 const showProductsAtcart = async (req, res) => {
-    const { userId, cartId } = req.body
+    const foundUser = req.foundUser;
+    const userId = foundUser ? foundUser.id : undefined;
 
-    const cartInFo = await cartService.showCartService(userId, cartId)
+    const cartInFo = await cartService.showCartService(userId)
 
     res.status(200).json({ data: cartInFo })
 }
 
 const showTotalPriceAtcart = async (req, res) => {
-    const { userId, cartId } = req.body
-    const total = await cartService.showTotalPriceService(userId, cartId)
+    const foundUser = req.foundUser;
+    const userId = foundUser ? foundUser.id : undefined;
+    const total = await cartService.showTotalPriceService(userId)
     res.status(200).json({ data: total })
 }
 

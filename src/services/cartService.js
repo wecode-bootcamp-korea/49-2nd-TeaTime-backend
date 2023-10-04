@@ -1,51 +1,38 @@
-const { addCartDao,
-    updateCountDao,
-    showCartDao,
-    deleteProductsDao,
-    existingProductsDao } = require('../models')
+const { cartDao } = require('../models')
 const { throwError } = require("../utils/throwError");
 
 const addCartServices = async (userId, productId, count) => {
-    const existingProducts = await existingProductsDao(userId, productId)
+    const existingProducts = await cartDao.existingProductsDao(userId, productId)
 
     if (existingProducts.lenght > 0) {
         const product = existingProducts[0]
         const newCount = product.count + count
-        await updateCountDao(newCount, product.id)
+        await cartDao.updateCountDao(newCount, product.id)
     } else {
-        await addCartDao(userId, productId, count)
+        await cartDao.addCartDao(userId, productId, count)
     }
-    if (!existingProducts) throwError(404,"오류 addCartServivces")
+    if (!existingProducts) throwError(404, "오류 addCartServivces")
 }
 
-const showTotalPriceService = async (userId, cartId) => {
+const showTotalPriceService = async (userId) => {
+    const cartItems = await cartDao.showCartDao(userId);
 
+    let total = 0;
 
-    async function calculateTotal(userId, cartId) {
-        const allPriceAtCart = showCartDao(userId, cartId)
-        let total = 0
+    for (const item of cartItems) {
+        const productPrice = item.price;
+        const productCount = item.count;
+        total += productPrice * productCount;
 
-        for (let i = 0; i < allPriceAtCart.lenght; i++) {
-            const productPrice = allPriceAtCart[i].price
-            total += productPrice
-
-        }  
-
-        if(!allPriceAtCart) throwError(404,"입력받은 아이디 값 카트 값 오류")
-
-        return total
+        return total;
     }
-    return calculateTotal(userId, cartId)
-    // 계산완료
-    // 추가로 정보를 무엇을 보내줘야할지 알아야함.
 }
 
-const deleteProductsServices = async (cartId, productId) => {
-    await deleteProductsDao(cartId, productId)
+const deleteProductsServices = async (productId) => {
+    await cartDao.deleteProductsDao(productId)
 }
 
-const showCartService = async (userId, cartId) => {
-    return await showCartDao(userId, cartId)
+const showCartService = async (userId) => {
+    return await cartDao.showCartDao(userId)
 }
-
 module.exports = { addCartServices, deleteProductsServices, showCartService, showTotalPriceService }

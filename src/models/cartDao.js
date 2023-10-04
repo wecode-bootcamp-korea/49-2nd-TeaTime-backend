@@ -15,23 +15,23 @@ const addCartDao = async (userId, productId, count) => {
                 )
             `[userId, productId, count])
 }
-const showCartDao = async (userId, cartId) => {
+const showCartDao = async (userId) => {
     return await myDataSource.query(`
-        SELECT 
-            cart.id,
-            cart.product_id,
-            cart.count,
+        SELECT
+            carts.id AS cart_id,
+            carts.product_id,
+            carts.count,
             products.name,
             products.price,
-            products.id
+            products.id AS product_id
         FROM
-            cart
+            carts
         LEFT JOIN
             products
         ON
-            products.id = cart.product_id
-        WHERE cart.user_id = ?;   
-        `, [userId, cartId])
+            products.id = carts.product_id
+        WHERE carts.user_id = ?;
+    `, [userId]);
 }
 const discountPriceDao = async (productId) => {
 
@@ -39,11 +39,11 @@ const discountPriceDao = async (productId) => {
             SELECT rate FROM discounts WHERE product_id = ?
         `, [productId])
 }
-const deleteProductsDao = async (cartId, productId) => {
+const deleteProductsDao = async (productId) => {
 
     await myDataSource.query(`
-            DELETE FROM cart WHERE cart_id = ? AND product_id = ?`,
-        [cartId, productId])
+            DELETE FROM cart WHERE product_id = ?`,
+        [productId])
 }
 const existingProductsDao = async (userId, productId) => {
 
@@ -58,7 +58,12 @@ const updateCountDao = async (count, productId) => {
     `, [count, productId])
 }
 module.exports = {
-    addCartDao, showCartDao, discountPriceDao, deleteProductsDao, existingProductsDao, updateCountDao
+    addCartDao,
+    showCartDao,
+    discountPriceDao,
+    deleteProductsDao,
+    existingProductsDao, 
+    updateCountDao
 }
 
 
