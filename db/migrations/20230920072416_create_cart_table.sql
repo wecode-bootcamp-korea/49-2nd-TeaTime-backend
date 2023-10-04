@@ -11,6 +11,10 @@ CREATE TABLE carts (
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
     FOREIGN KEY (product_id) REFERENCES products (id) ON DELETE CASCADE
 );
+
+ALTER TABLE carts
+    ADD COLUMN isbag ENUM('Y', 'N') DEFAULT 'N' NOT NULL,
+    ADD COLUMN ispackage ENUM('Y', 'N') DEFAULT 'N' NOT NULL;
 -- migrate:down
 
 DROP TABLE carts;

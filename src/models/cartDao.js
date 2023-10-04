@@ -1,19 +1,21 @@
 const { myDataSource } = require("./dataSource");
 
-const addCartDao = async (userId, productId, count) => {
+const addCartDao = async (userId, productId, count, isBag, isPackage) => {
 
     return await myDataSource.query(`
             INSERT INTO cart
             (
                 user_id,
                 product_id,
-                count
+                count,
+                isbag,
+                ispackage
                 )
             VALUES
             (
-                ?,?,?
+                ?,?,?,?,?
                 )
-            `[userId, productId, count])
+            `[userId, productId, count, isBag, isPackage])
 }
 const showCartDao = async (userId) => {
     return await myDataSource.query(`
@@ -62,7 +64,7 @@ module.exports = {
     showCartDao,
     discountPriceDao,
     deleteProductsDao,
-    existingProductsDao, 
+    existingProductsDao,
     updateCountDao
 }
 
