@@ -1,4 +1,4 @@
-const {orderDao} = require('../models');
+const {orderDao, cartDao, userDao} = require('../models');
 const {throwError} = require("../utils/throwError");
 
 const createOrder = async(
@@ -28,8 +28,25 @@ const createOrder = async(
 
 const cartOrder = async(
   payments, totalFee, isShippingFee, isAgree, userId, name, phoneNumber, email,
-  address, detailAddress, zipCode, orders
+  address, detailAddress, zipCode, cartIds
   ) => {
+    const orders = await cartDao.findCartByIds(cartIds, userId);
+    if(orders.length !== cartIds.length) {
+      throwError(404, "USER_CART_MISMATCH")
+    } 
+
+    orders.forEach(order => order.status = "결제완료");
+
+    let { point } = await userDao.findById(userId);
+
+    point -= totalFee;
+
+    if(point < 0) {
+      throwError(404, "NOT_ENOUGH_POINT")
+    };
+
+    await userDao.updatePoint(point, userId);
+
     await orderDao.cartOrder(
       payments, 
       totalFee, 
@@ -42,7 +59,8 @@ const cartOrder = async(
       address, 
       detailAddress, 
       zipCode, 
-      orders
+      orders,
+      cartIds
     );
 };
 
@@ -63,5 +81,5 @@ const getOrderList = async(userId) => {
 module.exports = {
   createOrder,
   getOrderList,
-  cartOrder
+  cartOrder,
 };

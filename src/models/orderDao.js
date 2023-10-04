@@ -45,7 +45,7 @@ const createOrder = async (
 
 const cartOrder = async(
   payments, totalFee, isShippingFee, isAgree, userId, name, phoneNumber, email,
-  address, detailAddress, zipCode, orders
+  address, detailAddress, zipCode, orders, cartIds
   ) => {
     await myDataSource.transaction(async (transactionManager) => {
       const { insertId:orderId } = await transactionManager.query(`
@@ -72,7 +72,7 @@ const cartOrder = async(
       [address, detailAddress, zipCode, orderId]
     );
     for (const order of orders) {
-      const {count, status="결제완료", isBag, isPacking, productId, orderId} = order;
+      const {count, status, isBag, isPacking, productId} = order;
       await transactionManager.query(`
           INSERT INTO order_details (
             count,
@@ -85,6 +85,14 @@ const cartOrder = async(
         [count, status, isBag, isPacking, productId, orderId]
       );
     }
+
+    await transactionManager.query(`
+        DELETE FROM 
+          carts 
+        WHERE 
+          id IN (?)`,
+      [cartIds]
+    );
   });
 };
 

@@ -1,4 +1,5 @@
 const {orderService} = require('../services');
+const {keyCheck} = require('../utils/keyCheck');
 
 const createOrder = async(req, res) => {
   const foundUser = req.foundUser;
@@ -24,7 +25,23 @@ const createOrder = async(req, res) => {
     productId
   } = req.body;
 
-  console.log(req.body);
+  keyCheck({
+    payments,
+    totalFee, 
+    isShippingFee, 
+    isAgree,
+    name, 
+    phoneNumber,
+    email,
+    address, 
+    detailAddress,
+    zipCode,
+    count,
+    status,
+    isBag,
+    isPacking,
+    productId
+  })
   
   await orderService.createOrder(
     payments, 
@@ -65,7 +82,7 @@ const cartOrder = async(req, res) => {
     address, 
     detailAddress, 
     zipCode, 
-    orders
+    cartIds
   } = req.body;
 
   await orderService.cartOrder(
@@ -80,8 +97,12 @@ const cartOrder = async(req, res) => {
     address, 
     detailAddress, 
     zipCode, 
-    orders
+    cartIds
   )
+
+  res.status(200).json({
+    message : "ORDER_SUCCESS",
+  });
 };
 
 const getOrderList = async(req, res) => {

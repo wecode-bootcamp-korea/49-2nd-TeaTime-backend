@@ -1,19 +1,21 @@
 const { myDataSource } = require("./dataSource");
 
-const addCartDao = async (userId, productId, count) => {
+const addCartDao = async (userId, productId, count, isBag, isPacking) => {
 
     return await myDataSource.query(`
-            INSERT INTO cart
+            INSERT INTO carts
             (
                 user_id,
                 product_id,
-                count
+                count,
+                is_bag,
+                is_packing
                 )
             VALUES
             (
-                ?,?,?
+                ?, ?, ?, ?, ?
                 )
-            `[userId, productId, count])
+            `[userId, productId, count, isBag, isPacking]);
 }
 const showCartDao = async (userId) => {
     return await myDataSource.query(`
@@ -42,20 +44,35 @@ const discountPriceDao = async (productId) => {
 const deleteProductsDao = async (productId) => {
 
     await myDataSource.query(`
-            DELETE FROM cart WHERE product_id = ?`,
+            DELETE FROM carts WHERE product_id = ?`,
         [productId])
 }
 const existingProductsDao = async (userId, productId) => {
 
     await myDataSource.query(`
-        SELECT*FROM cart WHERE user_id =? AND prduct_id =? 
+        SELECT*FROM carts WHERE user_id =? AND prduct_id =? 
         `, [userId, productId])
 }
 const updateCountDao = async (count, productId) => {
 
     await myDataSource.query(`
-    UPDATE cart SET count = ? WHERE id=?
+    UPDATE carts SET count = ? WHERE id=?
     `, [count, productId])
+}
+const findCartByIds = async(cartIds, userId) => {
+    return await myDataSource.query(`
+        SELECT
+            count,
+            product_id AS productId,
+            is_bag AS isBag,
+            is_packing AS isPacking
+        FROM
+            carts
+        WHERE
+            id IN (?) AND user_id = ?
+    `,
+    [cartIds, userId]
+    );
 }
 module.exports = {
     addCartDao,
@@ -63,7 +80,8 @@ module.exports = {
     discountPriceDao,
     deleteProductsDao,
     existingProductsDao, 
-    updateCountDao
+    updateCountDao,
+    findCartByIds
 }
 
 
