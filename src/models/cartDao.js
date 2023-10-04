@@ -3,7 +3,7 @@ const { myDataSource } = require("./dataSource");
 const addCartDao = async (userId, productId, count) => {
 
     return await myDataSource.query(`
-            INSERT INTO cart
+            INSERT INTO carts
             (
                 user_id,
                 product_id,
@@ -42,19 +42,19 @@ const discountPriceDao = async (productId) => {
 const deleteProductsDao = async (productId) => {
 
     await myDataSource.query(`
-            DELETE FROM cart WHERE product_id = ?`,
+            DELETE FROM carts WHERE product_id = ?`,
         [productId])
 }
 const existingProductsDao = async (userId, productId) => {
 
     await myDataSource.query(`
-        SELECT*FROM cart WHERE user_id =? AND prduct_id =? 
+        SELECT*FROM carts WHERE user_id =? AND prduct_id =? 
         `, [userId, productId])
 }
 const updateCountDao = async (count, productId) => {
 
     await myDataSource.query(`
-    UPDATE cart SET count = ? WHERE id=?
+    UPDATE carts SET count = ? WHERE id=?
     `, [count, productId])
 }
 module.exports = {
