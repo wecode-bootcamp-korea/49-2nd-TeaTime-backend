@@ -5,49 +5,87 @@ const createOrder = async (
   address, detailAddress, zipCode,
   count, status, isBag, isPacking, productId
 ) => {
-  const orderCreate = await myDataSource.query(`
-    INSERT INTO orders (
-      payments,
-      total_fee,
-      is_shipping_fee,
-      is_agree,
-      user_id,
-      name, 
-      phone_number,
-      email
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-    [payments, totalFee, isShippingFee, isAgree, userId, name, phoneNumber, email]
-  );
+  await myDataSource.transaction(async (transactionManager) => {
+    const { insertId:orderId } = await transactionManager.query(`
+      INSERT INTO orders (
+        payments,
+        total_fee,
+        is_shipping_fee,
+        is_agree,
+        user_id,
+        name, 
+        phone_number,
+        email
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      [payments, totalFee, isShippingFee, isAgree, userId, name, phoneNumber, email]
+    );
+  
+    await transactionManager.query(`
+        INSERT INTO order_addresses (
+          address,
+          detail_address,
+          zip_code,
+          order_id
+        ) VALUES (?, ?, ?, ?)`,
+      [address, detailAddress, zipCode, orderId]
+    );
+    await transactionManager.query(`
+        INSERT INTO order_details (
+          count,
+          status,
+          is_bag,
+          is_packing,
+          product_id,
+          order_id
+        ) VALUES (?, ?, ?, ?, ?, ?)`,
+      [count, status, isBag, isPacking, productId, orderId]
+     );
+  });
+};
 
-  const orderId = orderCreate.insertId;
-
-  const orderAddressCreate = await myDataSource.query(`
-      INSERT INTO order_addresses (
-        address,
-        detail_address,
-        zip_code,
-        order_id
-      ) VALUES (?, ?, ?, ?)`,
-    [address, detailAddress, zipCode, orderId]
-  );
-
-  const orderDetailCreate = await myDataSource.query(`
-      INSERT INTO order_details (
-        count,
-        status,
-        is_bag,
-        is_packing,
-        product_id,
-        order_id
-      ) VALUES (?, ?, ?, ?, ?, ?)`,
-    [count, status, isBag, isPacking, productId, orderId]
-  );
-
-  return {
-    orderCreate,
-    orderAddressCreate,
-    orderDetailCreate
-  }
+const cartOrder = async(
+  payments, totalFee, isShippingFee, isAgree, userId, name, phoneNumber, email,
+  address, detailAddress, zipCode, orders
+  ) => {
+    await myDataSource.transaction(async (transactionManager) => {
+      const { insertId:orderId } = await transactionManager.query(`
+        INSERT INTO orders (
+          payments,
+          total_fee,
+          is_shipping_fee,
+          is_agree,
+          user_id,
+          name, 
+          phone_number,
+          email
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        [payments, totalFee, isShippingFee, isAgree, userId, name, phoneNumber, email]
+      );
+    
+    await transactionManager.query(`
+        INSERT INTO order_addresses (
+          address,
+          detail_address,
+          zip_code,
+          order_id
+        ) VALUES (?, ?, ?, ?)`,
+      [address, detailAddress, zipCode, orderId]
+    );
+    for (const order of orders) {
+      const {count, status="결제완료", isBag, isPacking, productId, orderId} = order;
+      await transactionManager.query(`
+          INSERT INTO order_details (
+            count,
+            status,
+            is_bag,
+            is_packing,
+            product_id,
+            order_id
+          ) VALUES (?, ?, ?, ?, ?, ?)`,
+        [count, status, isBag, isPacking, productId, orderId]
+      );
+    }
+  });
 };
 
 const getOrderList = async(userId) => {
@@ -67,13 +105,16 @@ const getOrderList = async(userId) => {
         o.total_fee AS totalFee,
         oa.address,
         oa.detail_address AS detailAddress,
-        oa.zip_code AS zipCode  
+        oa.zip_code AS zipCode,
+        p.name
       FROM 
         order_details od
       LEFT JOIN
         orders o ON od.order_id = o.id
       LEFT JOIN
         order_addresses oa ON oa.order_id = o.id
+      LEFT JOIN
+        products p ON od.product_id = p.id
       WHERE o.user_id = ?
     `,
     [userId]
@@ -85,5 +126,6 @@ const getOrderList = async(userId) => {
 
 module.exports = {
   createOrder,
-  getOrderList
+  getOrderList,
+  cartOrder
 };

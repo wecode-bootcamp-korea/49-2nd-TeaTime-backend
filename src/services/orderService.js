@@ -6,7 +6,7 @@ const createOrder = async(
   address, detailAddress, zipCode,
   count, status, isBag, isPacking, productId
 ) => {
-    const order = await orderDao.createOrder(
+    await orderDao.createOrder(
       payments,
       totalFee,
       isShippingFee,
@@ -24,10 +24,26 @@ const createOrder = async(
       isPacking,
       productId
     );
+};
 
-    return{
-      order
-    };
+const cartOrder = async(
+  payments, totalFee, isShippingFee, isAgree, userId, name, phoneNumber, email,
+  address, detailAddress, zipCode, orders
+  ) => {
+    await orderDao.cartOrder(
+      payments, 
+      totalFee, 
+      isShippingFee, 
+      isAgree, 
+      userId, 
+      name, 
+      phoneNumber, 
+      email,
+      address, 
+      detailAddress, 
+      zipCode, 
+      orders
+    );
 };
 
 const getOrderList = async(userId) => {
@@ -36,11 +52,16 @@ const getOrderList = async(userId) => {
   console.log("service orderList", orderList);
 
   if(!orderList) throwError(404, "ORDERLIST_NOT_FOUND");
+  
+  if (!orderList || orderList.length === 0) {
+    return [];
+  }
 
   return orderList;
 };
 
 module.exports = {
   createOrder,
-  getOrderList
+  getOrderList,
+  cartOrder
 };

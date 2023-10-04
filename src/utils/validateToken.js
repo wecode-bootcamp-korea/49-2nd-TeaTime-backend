@@ -6,7 +6,6 @@ const permitUrls = {
   "/products": "GET",
   "/products/:id": "GET",
   "/products/:id/reviews": "GET",
-  "/orders":"GET",
 };
 
 const permitCheck = (method, endPoint) => {
