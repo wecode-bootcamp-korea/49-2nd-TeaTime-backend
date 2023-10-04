@@ -12,4 +12,4 @@ cartRouter.delete("/del", validateToken, asyncWrap(cartController.delProductsAtc
 module.exports = { cartRouter };
 
 // router는 경로설정만
-// ex) 수정은 post put 삭제는 del 확인은 get
+// ex) 수정은 post put 삭제는 del 확인은 get   c
