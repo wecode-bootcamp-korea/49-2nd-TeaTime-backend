@@ -37,8 +37,20 @@ const findProductsBest = async (req, res) => {
   });
 };
 
+const findProductByIdForOrder = async (req, res) => {
+  const productId = req.params.id;
+
+  const product = await productService.findProductByIdForOrder(productId);
+
+  res.status(200).json({
+    message: "READ_SUCCESS",
+    data: product,
+  });
+};
+
 module.exports = {
   findProducts,
   findProductByIdWithOther,
   findProductsBest,
+  findProductByIdForOrder,
 };

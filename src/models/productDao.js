@@ -22,6 +22,8 @@ const findProducts = async (userId, categoryQuery, sortQuery, page) => {
       images i1 ON i1.product_id = p.id AND i1.sort = 1
     LEFT JOIN 
       images i2 ON i2.product_id = p.id AND i2.sort = 2
+    WHERE 
+      p.id NOT IN (114, 115, 116)
     ${categoryQuery}
     ${sortQuery}
     LIMIT 8 OFFSET ?
@@ -37,6 +39,8 @@ const countProducts = async (categoryQuery) => {
       COUNT(*)
     FROM
       products p
+    WHERE 
+      p.id NOT IN (114, 115, 116)
     ${categoryQuery}
     `,
   );
@@ -61,7 +65,7 @@ const findProductByIdWithOther = async (userId, productId) => {
       CAST (p.price - d.rate * p.price / 100 AS SIGNED) AS discountPrice,
       EXISTS (SELECT id FROM likes WHERE user_id = ? AND product_id = p.id) AS isLiked,
       (SELECT COUNT(*) FROM reviews WHERE product_id = p.id) AS reviewCount,
-      CAST (ROUND ((SELECT AVG(grade) FROM reviews WHERE product_id = p.id), 0) AS SIGNED) AS reviewGradeAvg,
+      CAST (ROUND ((SELECT AVG(grade) FROM reviews WHERE product_id = p.id), 1) AS FLOAT) AS reviewGradeAvg,
       o.region
     FROM
       products p
@@ -128,10 +132,37 @@ const findProductsBest = async (sortQuery) => {
       images i1 ON i1.product_id = p.id AND i1.sort = 1
     LEFT JOIN 
       images i2 ON i2.product_id = p.id AND i2.sort = 2
+    WHERE 
+      p.id NOT IN (114, 115, 116)
     ${sortQuery}
     LIMIT 12
     `,
   );
+};
+
+const findProductByIdForOrder = async (productId) => {
+  const [result] = await myDataSource.query(
+    `
+    SELECT 
+      p.id,
+      p.name,
+      p.price,
+      i1.image_url AS mainImageUrl,
+      d.rate AS discountRate,
+      CAST (p.price - d.rate * p.price / 100 AS SIGNED) AS discountPrice
+    FROM
+      products p
+    LEFT JOIN 
+      discounts d ON d.id = p.discount_id
+    LEFT JOIN 
+      images i1 ON i1.product_id = p.id AND i1.sort = 1
+    WHERE p.id = ?
+    LIMIT 1
+    `,
+    [productId],
+  );
+
+  return result;
 };
 
 module.exports = {
@@ -140,4 +171,5 @@ module.exports = {
   findProductByIdWithOther,
   findProductById,
   findProductsBest,
+  findProductByIdForOrder,
 };
