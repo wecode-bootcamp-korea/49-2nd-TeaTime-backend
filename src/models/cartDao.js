@@ -17,22 +17,29 @@ const addCartDao = async (userId, productId, count, isBag, isPacking) => {
                 )
             `[userId, productId, count, isBag, isPacking]);
 }
+
 const showCartDao = async (userId) => {
     return await myDataSource.query(`
-        SELECT
-            carts.id AS cart_id,
-            carts.product_id,
-            carts.count,
-            products.name,
-            products.price,
-            products.id AS product_id
-        FROM
-            carts
-        LEFT JOIN
-            products
-        ON
-            products.id = carts.product_id
-        WHERE carts.user_id = ?;
+    SELECT
+        carts.id AS cart_id,
+        carts.product_id,
+        carts.count,
+        images.image_url,
+        products.name,
+        products.price,
+        products.id AS product_id
+    FROM
+        carts
+    LEFT JOIN
+        products
+    ON
+        products.id = carts.product_id
+    LEFT JOIN
+        images
+    ON
+        images.product_id = carts.product_id
+    WHERE carts.user_id = ?;
+
     `, [userId]);
 }
 const discountPriceDao = async (productId) => {

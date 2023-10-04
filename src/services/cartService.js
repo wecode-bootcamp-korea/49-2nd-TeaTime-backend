@@ -23,9 +23,13 @@ const showTotalPriceService = async (userId) => {
         const productPrice = item.price;
         const productCount = item.count;
         total += productPrice * productCount;
-
         return total;
     }
+}
+
+const showHowManyAtCartSevice = async (userId) => {
+    const cartItems = await cartDao.showCartDao(userId).lenght;
+    return cartItems
 }
 
 const deleteProductsServices = async (productId) => {
@@ -33,6 +37,7 @@ const deleteProductsServices = async (productId) => {
 }
 
 const showCartService = async (userId) => {
-    return await cartDao.showCartDao(userId)
+    const productInfo = await cartDao.showCartDao(userId)
+    return productInfo
 }
-module.exports = { addCartServices, deleteProductsServices, showCartService, showTotalPriceService }
+module.exports = { addCartServices, deleteProductsServices, showCartService, showTotalPriceService, showHowManyAtCartSevice }
