@@ -23,15 +23,18 @@ const findReviewByProductId = async (userId, productId, whereQuery, page) => {
   );
 };
 
-const countReviews = async (whereQuery) => {
+const countReviews = async (productId, whereQuery) => {
   const [result] = await myDataSource.query(
     `
     SELECT 
       COUNT(*)
     FROM
       reviews r
+    WHERE
+      r.product_id = ?
     ${whereQuery}
     `,
+    [productId],
   );
 
   return result["COUNT(*)"];

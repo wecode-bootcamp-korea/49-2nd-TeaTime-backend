@@ -1,6 +1,6 @@
 const { myDataSource } = require("./dataSource");
 
-const addCartDao = async (userId, productId, count, isBag, isPackage) => {
+const addCartDao = async (userId, productId, count, isBag, isPacking) => {
 
     return await myDataSource.query(`
             INSERT INTO carts
@@ -8,14 +8,14 @@ const addCartDao = async (userId, productId, count, isBag, isPackage) => {
                 user_id,
                 product_id,
                 count,
-                isbag,
-                ispackage
+                is_bag,
+                is_packing
                 )
             VALUES
             (
-                ?,?,?,?,?
+                ?, ?, ?, ?, ?
                 )
-            `[userId, productId, count, isBag, isPackage])
+            `[userId, productId, count, isBag, isPacking]);
 }
 
 const showCartDao = async (userId) => {
@@ -66,13 +66,29 @@ const updateCountDao = async (count, productId) => {
     UPDATE carts SET count = ? WHERE id=?
     `, [count, productId])
 }
+const findCartByIds = async(cartIds, userId) => {
+    return await myDataSource.query(`
+        SELECT
+            count,
+            product_id AS productId,
+            is_bag AS isBag,
+            is_packing AS isPacking
+        FROM
+            carts
+        WHERE
+            id IN (?) AND user_id = ?
+    `,
+    [cartIds, userId]
+    );
+}
 module.exports = {
     addCartDao,
     showCartDao,
     discountPriceDao,
     deleteProductsDao,
-    existingProductsDao,
-    updateCountDao
+    existingProductsDao, 
+    updateCountDao,
+    findCartByIds
 }
 
 
