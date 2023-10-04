@@ -13,8 +13,8 @@ const addProductAtCart = async (req, res) => {
 
 const delProductsAtcart = async (req, res) => {
 
-    const { productId } = req.body
-    await cartService.deleteProductsServices(productId)
+    const { productIds } = req.body
+    await cartService.deleteProductsServices(productIds)
 
     res.status(200).json({ "message": "delete" })
 }
@@ -31,7 +31,8 @@ const showProductsAtcart = async (req, res) => {
 const showTotalPriceAtcart = async (req, res) => {
     const foundUser = req.foundUser;
     const userId = foundUser ? foundUser.id : undefined;
-    const total = await cartService.showTotalPriceService(userId)
+    const { cartIds } = req.body
+    const total = await cartService.showTotalPriceService(userId, cartIds)
     res.status(200).json({ data: total })
 }
 

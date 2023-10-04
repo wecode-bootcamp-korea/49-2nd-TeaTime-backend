@@ -1,4 +1,5 @@
-const { cartDao } = require('../models')
+const { cartDao } = require('../models');
+const { deleteProductsDao } = require('../models/cartDao');
 const { throwError } = require("../utils/throwError");
 
 const addCartServices = async (userId, productId, count) => {
@@ -14,17 +15,36 @@ const addCartServices = async (userId, productId, count) => {
     if (!existingProducts) throwError(404, "오류 addCartServivces")
 }
 
-const showTotalPriceService = async (userId) => {
-    const cartItems = await cartDao.showCartDao(userId);
-
+const showTotalPriceService = async (userId, cartIds) => {
+    const cartItems = await cartDao.showCartDao(userId, cartIds);
+    // showcart에 가방값,포장값,할인값 추가
     let total = 0;
+    let productPriceTotal = 0;
+    let productDiscountTotal = 0;
+    let bagPriceTotal = 0;
+    let packagePriceTotal = 0;
 
     for (const item of cartItems) {
         const productPrice = item.price;
         const productCount = item.count;
-        total += productPrice * productCount;
-        return total;
+        const productDiscount = item.discount_id || 0;
+        const bagPrice = item.is_bag === 'Y' ? 5 : 0;
+        const packagePrice = item.is_package === 'Y' ? 10 : 0;
+
+        productPriceTotal += productPrice * productCount;
+        productDiscountTotal += productDiscount * productCount;
+        bagPriceTotal += bagPrice * productCount;
+        packagePriceTotal += packagePrice * productCount;
+        total += (productPrice - productDiscount + bagPrice + packagePrice) * productCount;
     }
+
+    return {
+        productPriceTotal,
+        productDiscountTotal,
+        bagPriceTotal,
+        packagePriceTotal,
+        total
+    };
 }
 
 const showHowManyAtCartSevice = async (userId) => {
@@ -32,8 +52,9 @@ const showHowManyAtCartSevice = async (userId) => {
     return cartItems
 }
 
-const deleteProductsServices = async (productId) => {
-    await cartDao.deleteProductsDao(productId)
+const deleteProductsServices = async (cartIds) => {
+    const productIdsToDelete = [cartIds]
+    await deleteProductsDao(productIdsToDelete)
 }
 
 const showCartService = async (userId) => {
