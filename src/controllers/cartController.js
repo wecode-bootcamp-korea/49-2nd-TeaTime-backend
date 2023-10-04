@@ -35,7 +35,15 @@ const showTotalPriceAtcart = async (req, res) => {
     res.status(200).json({ data: total })
 }
 
+const showCartProductTotal = async (req, res) => {
+    const foundUser = req.foundUser;
+    const userId = foundUser ? foundUser.id : undefined;
+    const totalAtCart = await cartService.showHowManyAtCartSevice(userId)
+    res.status(200).json({ data: totalAtCart })
+}
+
 module.exports = {
+    showCartProductTotal,
     addProductAtCart,
     delProductsAtcart,
     showProductsAtcart,
