@@ -69,12 +69,6 @@ const getOrderList = async(userId) => {
   console.log("service id", userId);
   console.log("service orderList", orderList);
 
-  if(!orderList) throwError(404, "ORDERLIST_NOT_FOUND");
-  
-  if (!orderList || orderList.length === 0) {
-    return [];
-  }
-
   return orderList;
 };
 
