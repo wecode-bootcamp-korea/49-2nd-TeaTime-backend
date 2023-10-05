@@ -27,11 +27,10 @@ const showCartDao1 = async (userId, cartIds) => { // 할인율 체크
         images.image_url,
         products.name,
         products.price,
-        products.discount,
         products.id AS product_id,
         products.discount_id,
         order_details.is_bag,
-        order_details.is_package
+        order_details.is_packing
     FROM
         carts
     LEFT JOIN
@@ -50,7 +49,7 @@ const showCartDao1 = async (userId, cartIds) => { // 할인율 체크
 
     `, [userId, cartIds]);
 }
-const showCartDao2 = async (userId) => { // 할인율 체크
+const showCartDao2 = async (userId) => { // 전체 장바구니 조회
     return await myDataSource.query(`
     SELECT
         carts.id AS cart_id,
@@ -59,11 +58,10 @@ const showCartDao2 = async (userId) => { // 할인율 체크
         images.image_url,
         products.name,
         products.price,
-        products.discount,
         products.id AS product_id,
         products.discount_id,
         order_details.is_bag,
-        order_details.is_package
+        order_details.is_packing
     FROM
         carts
     LEFT JOIN
@@ -82,6 +80,7 @@ const showCartDao2 = async (userId) => { // 할인율 체크
 
     `, [userId]);
 }
+
 const discountPriceDao = async (productId) => {//체크
 
     await myDataSource.query(`
