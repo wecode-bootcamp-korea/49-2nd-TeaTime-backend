@@ -127,6 +127,9 @@ if (!user) {
   throwError(404, "USER_NOT_FOUND");
 }
 
+if (isMain) {
+  await userDao.clearMainDeliveryAddress(userId);
+}
   await userDao.createDeliveryAddress(address, detailAddress, zipCode, name, isMainValue, userId, phoneNumber, subName);
 };
 
@@ -134,7 +137,9 @@ const getUserRegistrationData = async (userId) => {
   if (!userId) {
     throwError(400, "KEY_ERROR");
   }
-  const userData = await userDao.getDeliveryAddressById(userId);
+
+  
+  const userData = await userDao.getMainDeliveryAddress(userId);
   const user = await userDao.findById(userId);
 
   return {

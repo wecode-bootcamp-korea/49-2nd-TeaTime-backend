@@ -120,12 +120,19 @@ const getDeliveryAddressById = async (userId) => {
   return user
 };
 
+const getMainDeliveryAddress = async (userId) => {
+  const user = await myDataSource.query(`
+  SELECT * FROM delivery_addresses WHERE user_id = ? AND is_main = 1;`, [userId])
+
+  return user
+}
+
 const updateDeliveryAddress = async (userId) => {
   const user = await myDataSource.query(
     `
     UPDATE delivery_addresses
-    SET is_main = 0
-    WHERE user_id = ?;
+    SET is_main = 1
+    WHERE id = ?;
     `,
     [userId]
   )
@@ -138,6 +145,17 @@ const deleteDeliveryAddress = async (deliveryAddressId) => {
   WHERE id = ?
 `, [deliveryAddressId])
 return user
+}
+
+const clearMainDeliveryAddress = async (userId) => {
+  const user = await myDataSource.query(
+    `
+    UPDATE delivery_addresses
+    SET is_main = 0
+    WHERE user_id = ? AND is_main = 1;
+    `, [userId]
+  )
+  return user
 }
 
 const updatePoint = async(point, userId) => {
@@ -159,6 +177,8 @@ module.exports = {
   createDeliveryAddress,
   getDeliveryAddressById,
   updateDeliveryAddress,
+  getMainDeliveryAddress,
   deleteDeliveryAddress,
+  clearMainDeliveryAddress,
   updatePoint
 };
