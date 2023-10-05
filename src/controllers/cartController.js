@@ -4,9 +4,9 @@ const { cartService } = require("../services")
 const addProductAtCart = async (req, res) => {
     const foundUser = req.foundUser;
     const userId = foundUser ? foundUser.id : undefined;
-    const { productId, count } = req.body
+    const { productId, count, isBag, isPackage } = req.body
 
-    await cartService.addCartServices(userId, productId, count)
+    await cartService.addCartServices(userId, productId, count, isBag, isPackage)
 
     res.status(200).json({ "message": "add" })
 }

@@ -2,15 +2,15 @@ const { cartDao } = require('../models');
 const { deleteProductsDao } = require('../models/cartDao');
 const { throwError } = require("../utils/throwError");
 
-const addCartServices = async (userId, productId, count) => {
-    const existingProducts = await cartDao.existingProductsDao(userId, productId)
+const addCartServices = async (userId, productId, count, isBag, isPacking) => {
+    const existingProducts = await cartDao.existingProductsDao(userId, cartId)
 
     if (existingProducts.lenght > 0) {
         const product = existingProducts[0]
         const newCount = product.count + count
-        await cartDao.updateCountDao(newCount, product.id)
+        await cartDao.updateCountDao(newCount, carts.id)
     } else {
-        await cartDao.addCartDao(userId, productId, count)
+        await cartDao.addCartDao(userId, productId, count, isBag, isPacking)
     }
     if (!existingProducts) throwError(404, "오류 addCartServivces")
 }
