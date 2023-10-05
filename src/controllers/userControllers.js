@@ -77,10 +77,50 @@ const getUserRegistrationData = async (req, res) => {
   }
 };
 
+const updateDeliveryAddress = async (req, res) => {
+  try {
+    const { address, detailAddress, zipCode, name, isMain, phoneNumber, subName } = req.body;
+    const foundUser = req.foundUser;
+    const userId = foundUser ? foundUser.id : undefined;
+
+    await userService.updateDeliveryAddress(addressId, {
+      address,
+      detailAddress,
+      zipCode,
+      name,
+      isMain,
+      userId,
+      phoneNumber,
+      subName,
+    });
+    return res.status(200).json({ 
+      message: 'SUCCESS',
+    });
+  } catch (error) {
+    console.log(error); 
+    return res.status(400).json(error);
+  }
+};
+
+const deleteDeliveryAddress = async (req, res) => {
+  try{
+  const { addressId } = req.body;
+  await userService.deleteDeliveryAddress(addressId);
+  return res.status(200).json({ 
+    message: 'SUCCESS',
+    user: userData
+  });
+} catch (error) {
+  console.log(error); 
+  return res.status(400).json(error);
+}}
+
 module.exports = {
   signup,
   login,
   checkDuplicateUserID,
   createDeliveryAddress,
-  getUserRegistrationData
+  getUserRegistrationData,
+  updateDeliveryAddress,
+  deleteDeliveryAddress
 };

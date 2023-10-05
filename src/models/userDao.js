@@ -106,7 +106,8 @@ const getDeliveryAddressById = async (userId) => {
     address, 
     detail_address AS detailAddress, 
     zip_code AS zipCode, 
-    name, 
+    name,
+    is_main AS isMain, 
     user_id AS userId, 
     phone_number AS phoneNumber,
     sub_name AS subName 
