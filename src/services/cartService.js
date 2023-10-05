@@ -5,7 +5,7 @@ const { throwError } = require("../utils/throwError");
 const addCartServices = async (userId, productId, count, isBag, isPacking) => {
     const existingProducts = await cartDao.existingProductsDao(userId, productId)
 
-    if (existingProducts.lenght > 0) {
+    if (existingProducts.length > 0) {
         const product = existingProducts[0]
         const newCount = product.count + count
         await cartDao.updateCountDao(newCount, carts.id)
@@ -48,7 +48,7 @@ const showTotalPriceService = async (userId, cartIds) => {
 }
 
 const showHowManyAtCartSevice = async (userId) => {
-    const cartItems = await cartDao.showCartDao(userId).lenght;
+    const cartItems = await cartDao.showCartDao(userId).length;
     return cartItems
 }
 
