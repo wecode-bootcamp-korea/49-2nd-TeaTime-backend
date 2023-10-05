@@ -8,12 +8,11 @@ const addCartServices = async (userId, productId, count, isBag, isPacking) => {
   if (existingProducts.length > 0) {
     const product = existingProducts[0];
     const newCount = product.count + count;
-    await cartDao.updateCountDao(newCount, carts.id);
+    await cartDao.updateCountDao(newCount, product.id);
   } else {
     await cartDao.addCartDao(userId, productId, count, isBag, isPacking);
   }
 
-  console.log(1);
   if (!existingProducts) throwError(404, "오류 addCartServivces");
 };
 
