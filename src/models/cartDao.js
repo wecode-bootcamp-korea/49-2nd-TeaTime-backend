@@ -15,54 +15,54 @@ const addCartDao = async (userId, productId, count, isBag, isPacking) => {
             (
                 ?, ?, ?, ?, ?
                 )
-            `,[userId, productId, count, isBag, isPacking]);
+            `, [userId, productId, count, isBag, isPacking]);
 }
 
-const showCartDao1 = async (userId, cartIds) => { // 할인율 체크
-    return await myDataSource.query(`
-    SELECT
-        carts.id AS cart_id,
+const showCartDao1 = async (userId, cartIds) => {
+    const result = await myDataSource.query(`
+      SELECT
+        MAX(carts.id) AS cart_id,
         carts.product_id,
-        carts.count,
-        images.image_url,
-        products.name,
-        products.price,
-        products.discount,
-        products.id AS product_id,
-        products.discount_id,
-        order_details.is_bag,
-        order_details.is_package
-    FROM
+        SUM(carts.count) AS count,
+        MAX(images.image_url) AS image_url,
+        MAX(products.name) AS name,
+        MAX(products.price) AS price,
+        MAX(products.id) AS product_id,
+        MAX(products.discount_id) AS discount_id,
+        MAX(order_details.is_bag) AS is_bag,
+        MAX(order_details.is_packing) AS is_packing
+      FROM
         carts
-    LEFT JOIN
+      LEFT JOIN
         products
-    ON
+      ON
         products.id = carts.product_id
-    LEFT JOIN
+      LEFT JOIN
         images
-    ON
+      ON
         images.product_id = carts.product_id
-    LEFT JOIN
+      LEFT JOIN
         order_details
-    ON
+      ON
         order_details.product_id = carts.product_id
-    WHERE carts.user_id = ? AND carts.id IN (?);
-
+      WHERE carts.user_id = ? AND carts.id IN (?)
+      GROUP BY carts.product_id;
     `, [userId, cartIds]);
+    return result
 }
-const showCartDao2 = async (userId) => { // 전체 장바구니 조회
-    return await myDataSource.query(`
+
+const showCartDao2 = async (userId) => {
+    const result = await myDataSource.query(`
     SELECT
         carts.id AS cart_id,
         carts.product_id,
-        carts.count,
-        images.image_url,
-        products.name,
-        products.price,
-        products.id AS product_id,
-        products.discount_id,
-        order_details.is_bag,
-        order_details.is_packing
+        MAX(carts.count) AS count,
+        MAX(images.image_url) AS image_url,
+        MAX(products.name) AS name,
+        MAX(products.price) AS price,
+        MAX(products.discount_id) AS discount_id,
+        MAX(order_details.is_bag) AS is_bag,
+        MAX(order_details.is_packing) AS is_packing
     FROM
         carts
     LEFT JOIN
@@ -77,11 +77,12 @@ const showCartDao2 = async (userId) => { // 전체 장바구니 조회
         order_details
     ON
         order_details.product_id = carts.product_id
-    WHERE carts.user_id = ?;
+    WHERE carts.user_id = ?
+    GROUP BY carts.id, carts.product_id;
+`, [userId])
 
-    `, [userId]);
+    return result;
 }
-
 const discountPriceDao = async (productId) => {//체크
 
     await myDataSource.query(`
@@ -95,14 +96,14 @@ const deleteProductsDao = async (cartIds) => {
         [cartIds])
 }
 const existingProductsDao = async (userId, productId) => {
-      const result = await myDataSource.query(`
+    const result = await myDataSource.query(`
         SELECT * FROM carts WHERE user_id = ? AND product_id = ?
       `, [userId, productId]);
-      
-      return result;
-    
-  };
-  
+
+    return result;
+
+};
+
 const updateCountDao = async (count, productId) => {
 
     await myDataSource.query(`
