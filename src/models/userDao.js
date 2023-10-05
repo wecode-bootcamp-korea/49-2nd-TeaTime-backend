@@ -122,7 +122,7 @@ const getDeliveryAddressById = async (userId) => {
 
 const getMainDeliveryAddress = async (userId) => {
   const user = await myDataSource.query(`
-  SELECT * FROM delivery_addresses WHERE user_id = ? AND is_main = 1;`, [userId])
+  SELECT * FROM delivery_addresses WHERE user_id = ?;`, [userId])
 
   return user
 }
