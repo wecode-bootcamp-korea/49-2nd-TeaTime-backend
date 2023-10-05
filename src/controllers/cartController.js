@@ -43,10 +43,17 @@ const showCartProductTotal = async (req, res) => {
     res.status(200).json({ data: totalAtCart })
 }
 
+const justaddCartCount = async (req, res) => {
+    const { count, cartId } = req.body
+    await cartService.addCartServices2(count, cartId)
+    res.status(200).json({ "message": "upload count" })
+}
+
 module.exports = {
     showCartProductTotal,
     addProductAtCart,
     delProductsAtcart,
     showProductsAtcart,
-    showTotalPriceAtcart
+    showTotalPriceAtcart,
+    justaddCartCount
 }
