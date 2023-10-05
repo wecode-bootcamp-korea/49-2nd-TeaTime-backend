@@ -15,10 +15,10 @@ const addCartDao = async (userId, productId, count, isBag, isPacking) => {
             (
                 ?, ?, ?, ?, ?
                 )
-            `[userId, productId, count, isBag, isPacking]);
+            `,[userId, productId, count, isBag, isPacking]);
 }
 
-const showCartDao = async (userId, cartIds) => { // 할인율 체크
+const showCartDao1 = async (userId, cartIds) => { // 할인율 체크
     return await myDataSource.query(`
     SELECT
         carts.id AS cart_id,
@@ -49,6 +49,38 @@ const showCartDao = async (userId, cartIds) => { // 할인율 체크
     WHERE carts.user_id = ? AND carts.id IN (?);
 
     `, [userId, cartIds]);
+}
+const showCartDao2 = async (userId) => { // 할인율 체크
+    return await myDataSource.query(`
+    SELECT
+        carts.id AS cart_id,
+        carts.product_id,
+        carts.count,
+        images.image_url,
+        products.name,
+        products.price,
+        products.discount,
+        products.id AS product_id,
+        products.discount_id,
+        order_details.is_bag,
+        order_details.is_package
+    FROM
+        carts
+    LEFT JOIN
+        products
+    ON
+        products.id = carts.product_id
+    LEFT JOIN
+        images
+    ON
+        images.product_id = carts.product_id
+    LEFT JOIN
+        order_details
+    ON
+        order_details.product_id = carts.product_id
+    WHERE carts.user_id = ?;
+
+    `, [userId]);
 }
 const discountPriceDao = async (productId) => {//체크
 
@@ -91,7 +123,8 @@ const findCartByIds = async (cartIds, userId) => {
 }
 module.exports = {
     addCartDao,
-    showCartDao,
+    showCartDao1,
+    showCartDao2,
     discountPriceDao,
     deleteProductsDao,
     existingProductsDao,

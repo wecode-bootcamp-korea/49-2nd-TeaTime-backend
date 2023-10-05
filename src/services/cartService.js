@@ -16,7 +16,7 @@ const addCartServices = async (userId, productId, count, isBag, isPacking) => {
 }
 
 const showTotalPriceService = async (userId, cartIds) => {
-    const cartItems = await cartDao.showCartDao(userId, cartIds);
+    const cartItems = await cartDao.showCartDao1(userId, cartIds);
     // showcart에 가방값,포장값,할인값 추가
     let total = 0;
     let productPriceTotal = 0;
@@ -48,7 +48,7 @@ const showTotalPriceService = async (userId, cartIds) => {
 }
 
 const showHowManyAtCartSevice = async (userId) => {
-    const cartItems = await cartDao.showCartDao(userId).length;
+    const cartItems = await cartDao.showCartDao2(userId).length;
     return cartItems
 }
 
