@@ -95,11 +95,14 @@ const deleteProductsDao = async (cartIds) => {
         [cartIds])
 }
 const existingProductsDao = async (userId, productId) => {
-
-    await myDataSource.query(`
-        SELECT*FROM carts WHERE user_id =? AND prduct_id =? 
-        `, [userId, productId])
-}
+      const result = await myDataSource.query(`
+        SELECT * FROM carts WHERE user_id = ? AND product_id = ?
+      `, [userId, productId]);
+      
+      return result;
+    
+  };
+  
 const updateCountDao = async (count, productId) => {
 
     await myDataSource.query(`
