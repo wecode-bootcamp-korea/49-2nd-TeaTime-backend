@@ -59,7 +59,7 @@ const showHowManyAtCartSevice = async (userId) => {
 }
 
 const deleteProductsServices = async (cartIds) => {
-    const productIdsToDelete = [cartIds];
+    const productIdsToDelete = cartIds;
     await deleteProductsDao(productIdsToDelete);
 };
 
