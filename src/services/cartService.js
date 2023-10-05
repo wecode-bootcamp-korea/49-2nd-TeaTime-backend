@@ -59,7 +59,7 @@ const showHowManyAtCartSevice = async (userId) => {
 }
 
 const deleteProductsServices = async (cartIds) => {
-    const productIdsToDelete = [cartIds];
+    const productIdsToDelete = cartIds;
     await deleteProductsDao(productIdsToDelete);
 };
 
@@ -69,10 +69,9 @@ const showCartService = async (userId) => {
     productInfo.forEach((product) => {
         const discountRate = product.discount_rate || 0;
         const price = product.price || 0;
-        const count = product.count || 0;
-
-        const discountPrice = price * discountRate * count;
+        const discountPrice = price * discountRate / 100
         product.discountPrice = discountPrice;
+
 
     });
     return {
