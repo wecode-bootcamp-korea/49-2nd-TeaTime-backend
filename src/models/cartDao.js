@@ -1,8 +1,8 @@
 const { myDataSource } = require("./dataSource");
 
 const addCartDao = async (userId, productId, count, isBag, isPacking) => {
-
-    return await myDataSource.query(`
+  return await myDataSource.query(
+    `
             INSERT INTO carts
             (
                 user_id,
@@ -15,11 +15,15 @@ const addCartDao = async (userId, productId, count, isBag, isPacking) => {
             (
                 ?, ?, ?, ?, ?
                 )
-            `[userId, productId, count, isBag, isPacking]);
-}
+            `,
+    [userId, productId, count, isBag, isPacking],
+  );
+};
 
-const showCartDao = async (userId, cartIds) => { // 할인율 체크
-    return await myDataSource.query(`
+const showCartDao = async (userId, cartIds) => {
+  // 할인율 체크
+  return await myDataSource.query(
+    `
     SELECT
         carts.id AS cart_id,
         carts.product_id,
@@ -48,34 +52,46 @@ const showCartDao = async (userId, cartIds) => { // 할인율 체크
         order_details.product_id = carts.product_id
     WHERE carts.user_id = ? AND carts.id IN (?);
 
-    `, [userId, cartIds]);
-}
-const discountPriceDao = async (productId) => {//체크
+    `,
+    [userId, cartIds],
+  );
+};
+const discountPriceDao = async (productId) => {
+  //체크
 
-    await myDataSource.query(`
+  await myDataSource.query(
+    `
             SELECT rate FROM discounts WHERE product_id = ?
-        `, [productId])
-}
+        `,
+    [productId],
+  );
+};
 const deleteProductsDao = async (cartIds) => {
-
-    await myDataSource.query(`
+  await myDataSource.query(
+    `
         DELETE FROM carts WHERE cart_id IN (?)`,
-        [cartIds])
-}
+    [cartIds],
+  );
+};
 const existingProductsDao = async (userId, productId) => {
-
-    await myDataSource.query(`
-        SELECT*FROM carts WHERE user_id =? AND product_id =? 
-        `, [userId, productId])
-}
+  return await myDataSource.query(
+    `
+        SELECT * FROM carts WHERE user_id =? AND product_id =? 
+        `,
+    [userId, productId],
+  );
+};
 const updateCountDao = async (count, cartId) => {
-
-    await myDataSource.query(`
+  await myDataSource.query(
+    `
     UPDATE carts SET count = ? WHERE cart_id=?
-    `, [count, cartId])// cartid
-}
+    `,
+    [count, cartId],
+  ); // cartid
+};
 const findCartByIds = async (cartIds, userId) => {
-    return await myDataSource.query(`
+  return await myDataSource.query(
+    `
         SELECT
             count,
             product_id AS productId,
@@ -86,18 +102,17 @@ const findCartByIds = async (cartIds, userId) => {
         WHERE
             id IN (?) AND user_id = ?
     `,
-        [cartIds, userId]
-    );
-}
+    [cartIds, userId],
+  );
+};
 module.exports = {
-    addCartDao,
-    showCartDao,
-    discountPriceDao,
-    deleteProductsDao,
-    existingProductsDao,
-    updateCountDao,
-    findCartByIds
-}
-
+  addCartDao,
+  showCartDao,
+  discountPriceDao,
+  deleteProductsDao,
+  existingProductsDao,
+  updateCountDao,
+  findCartByIds,
+};
 
 // 상품, 금액, 할인값, 갯수,사진, 장바구니 갯수
