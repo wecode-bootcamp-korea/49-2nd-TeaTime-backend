@@ -3,7 +3,7 @@ const { deleteProductsDao } = require('../models/cartDao');
 const { throwError } = require("../utils/throwError");
 
 const addCartServices = async (userId, productId, count, isBag, isPacking) => {
-    const existingProducts = await cartDao.existingProductsDao(userId, cartId)
+    const existingProducts = await cartDao.existingProductsDao(userId, productId)
 
     if (existingProducts.lenght > 0) {
         const product = existingProducts[0]
