@@ -41,12 +41,12 @@ const cartOrder = async(
 
     orders.forEach(order => {
       order.status = "결제완료";
-      order.payments = "kakaoPay";
     });
+    const payments = "kakaoPay";
 
     let { point } = await userDao.findById(userId);
 
-    point -= totalFee;
+    point -= totalPrice;
 
     if(point < 0) {
       throwError(404, "NOT_ENOUGH_POINT")
@@ -55,6 +55,7 @@ const cartOrder = async(
     await userDao.updatePoint(point, userId);
 
     await orderDao.cartOrder(
+      payments,
       totalPrice, 
       isShippingFee, 
       isAgree, 
