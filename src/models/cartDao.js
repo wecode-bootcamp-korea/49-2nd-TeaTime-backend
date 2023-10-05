@@ -23,7 +23,7 @@ const showCartDao1 = async (userId, cartIds) => {
       SELECT
         MAX(carts.id) AS cart_id,
         carts.product_id,
-        SUM(carts.count) AS count,
+        MAX(carts.count) AS count,
         MAX(images.image_url) AS image_url,
         MAX(products.name) AS name,
         MAX(products.price) AS price,
@@ -62,7 +62,7 @@ const showCartDao2 = async (userId) => {
       SELECT
         MAX(carts.id) AS cart_id,
         carts.product_id,
-        SUM(carts.count) AS count,
+        MAX(carts.count) AS count,
         MAX(images.image_url) AS image_url,
         MAX(products.name) AS name,
         MAX(products.price) AS price,
