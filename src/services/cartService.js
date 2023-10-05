@@ -28,8 +28,8 @@ const showTotalPriceService = async (userId, cartIds) => {
         const productPrice = item.price;
         const productCount = item.count;
         const productDiscount = item.discount_id || 0;
-        const bagPrice = item.is_bag === 'Y' ? 5 : 0;
-        const packagePrice = item.is_package === 'Y' ? 10 : 0;
+        const bagPrice = item.is_bag === 1 ? 100 : 0;
+        const packagePrice = item.is_package === 1 ? 2000 : 0;
 
         productPriceTotal += productPrice * productCount;
         productDiscountTotal += productDiscount * productCount;
