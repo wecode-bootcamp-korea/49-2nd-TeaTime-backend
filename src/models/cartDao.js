@@ -95,11 +95,18 @@ const deleteProductsDao = async (cartIds) => {
         [cartIds])
 }
 const existingProductsDao = async (userId, productId) => {
-
-    await myDataSource.query(`
-        SELECT*FROM carts WHERE user_id =? AND prduct_id =? 
-        `, [userId, productId])
-}
+    try {
+      const result = await myDataSource.query(`
+        SELECT * FROM carts WHERE user_id = ? AND product_id = ?
+      `, [userId, productId]);
+      
+      return result;
+    } catch (error) {
+      console.error("existingProductsDao 오류:", error);
+      return [];
+    }
+  };
+  
 const updateCountDao = async (count, productId) => {
 
     await myDataSource.query(`
