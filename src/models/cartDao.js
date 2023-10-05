@@ -18,7 +18,7 @@ const addCartDao = async (userId, productId, count, isBag, isPacking) => {
             `[userId, productId, count, isBag, isPacking]);
 }
 
-const showCartDao = async (userId) => {
+const showCartDao = async (userId, cartIds) => { // 할인율 체크
     return await myDataSource.query(`
     SELECT
         carts.id AS cart_id,
@@ -27,7 +27,11 @@ const showCartDao = async (userId) => {
         images.image_url,
         products.name,
         products.price,
-        products.id AS product_id
+        products.discount,
+        products.id AS product_id,
+        products.discount_id,
+        order_details.is_bag,
+        order_details.is_package
     FROM
         carts
     LEFT JOIN
@@ -38,35 +42,39 @@ const showCartDao = async (userId) => {
         images
     ON
         images.product_id = carts.product_id
-    WHERE carts.user_id = ?;
+    LEFT JOIN
+        order_details
+    ON
+        order_details.product_id = carts.product_id
+    WHERE carts.user_id = ? AND carts.id IN (?);
 
-    `, [userId]);
+    `, [userId, cartIds]);
 }
-const discountPriceDao = async (productId) => {
+const discountPriceDao = async (productId) => {//체크
 
     await myDataSource.query(`
             SELECT rate FROM discounts WHERE product_id = ?
         `, [productId])
 }
-const deleteProductsDao = async (productId) => {
+const deleteProductsDao = async (cartIds) => {
 
     await myDataSource.query(`
-            DELETE FROM carts WHERE product_id = ?`,
-        [productId])
+        DELETE FROM carts WHERE cart_id IN (?)`,
+        [cartIds])
 }
 const existingProductsDao = async (userId, productId) => {
 
     await myDataSource.query(`
-        SELECT*FROM carts WHERE user_id =? AND prduct_id =? 
+        SELECT*FROM carts WHERE user_id =? AND product_id =? 
         `, [userId, productId])
 }
-const updateCountDao = async (count, productId) => {
+const updateCountDao = async (count, cartId) => {
 
     await myDataSource.query(`
-    UPDATE carts SET count = ? WHERE id=?
-    `, [count, productId])
+    UPDATE carts SET count = ? WHERE cart_id=?
+    `, [count, cartId])// cartid
 }
-const findCartByIds = async(cartIds, userId) => {
+const findCartByIds = async (cartIds, userId) => {
     return await myDataSource.query(`
         SELECT
             count,
@@ -78,7 +86,7 @@ const findCartByIds = async(cartIds, userId) => {
         WHERE
             id IN (?) AND user_id = ?
     `,
-    [cartIds, userId]
+        [cartIds, userId]
     );
 }
 module.exports = {
@@ -86,7 +94,7 @@ module.exports = {
     showCartDao,
     discountPriceDao,
     deleteProductsDao,
-    existingProductsDao, 
+    existingProductsDao,
     updateCountDao,
     findCartByIds
 }
