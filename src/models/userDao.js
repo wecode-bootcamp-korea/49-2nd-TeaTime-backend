@@ -16,6 +16,22 @@ const findById = async (id) => {
   return user;
 };
 
+const findByUserId = async (userId) => {
+  const user = await myDataSource.query(
+    `
+    SELECT
+      id
+    FROM
+      users
+    WHERE
+      id = ?
+    `,
+    [userId]
+  );
+
+  return user[0];
+};
+
 const signupUser = async (name, login_id, password, email, phone_number, is_agree) => {
   await myDataSource.query(`
   INSERT INTO users (
@@ -35,7 +51,7 @@ const signupUser = async (name, login_id, password, email, phone_number, is_agre
             '${is_agree}',
             0 -- 'is_delete'
         )
-  `)
+  `);
 };
 
 const getUserByName = async (name) => {
@@ -47,7 +63,7 @@ const getUserByName = async (name) => {
 
 const getUserByEmail = async (email) => {
   const user = await myDataSource.query(`
-  SELECT id, email FROM users WHERE email = '${email}'
+  SELECT id, name, email FROM users WHERE email = '${email}'
   `);
   return user;
 };
@@ -66,20 +82,73 @@ const getUserById = async (login_id) => {
   return user;
 };
 
-const updatePoint = async(point, userId) => {
-  await myDataSource.query(`
-    UPDATE users SET point = ? WHERE id = ?
-  `,
-  [point, userId]
+const createDeliveryAddress = async (address, detailAddress, zipCode, name, isMain, userId, phoneNumber, subName) => {
+
+    await myDataSource.query(`
+    INSERT INTO delivery_addresses (
+      address, 
+      detail_address, 
+      zip_code,
+      name,
+      is_main,
+      user_id,
+      phone_number,
+      sub_name
+        )VALUES
+        (?,?,?,?,?,?,?,?)
+    `, [address, detailAddress, zipCode, name, isMain, userId, phoneNumber, subName]);
+};
+
+const getDeliveryAddressById = async (userId) => {
+  const user = await myDataSource.query(
+    `SELECT 
+    id, 
+    address, 
+    detail_address AS detailAddress, 
+    zip_code AS zipCode, 
+    name, 
+    user_id AS userId, 
+    phone_number AS phoneNumber,
+    sub_name AS subName 
+    FROM 
+    delivery_addresses 
+    WHERE 
+    user_id = ?`,
+    [userId]
   )
+  return user
+};
+
+const updateDeliveryAddress = async (userId) => {
+  const user = await myDataSource.query(
+    `
+    UPDATE delivery_addresses
+    SET is_main = 0
+    WHERE user_id = ?;
+    `,
+    [userId]
+  )
+  return user;
 }
 
-module.exports = { 
+const deleteDeliveryAddress = async (deliveryAddressId) => {
+  const user = await myDataSource.query(`
+  DELETE FROM delivery_addresses
+  WHERE id = ?
+`, [deliveryAddressId])
+return user
+}
+
+module.exports = {
   findById,
+  findByUserId,
   getUserByName,
   signupUser,
   getUserByEmail,
   getUserByNumber,
   getUserById,
-  updatePoint
- };
+  createDeliveryAddress,
+  getDeliveryAddressById,
+  updateDeliveryAddress,
+  deleteDeliveryAddress
+};

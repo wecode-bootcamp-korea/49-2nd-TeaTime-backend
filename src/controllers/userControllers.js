@@ -1,70 +1,86 @@
 const { userService } = require("../services");
 
-const signup = async(req, res) => {
-    try {
-        const { name, login_id, password, email, phoneNumber, is_agree } = req.body;
-        await userService.signup({
-            name,
-            login_id,
-            password,
-            email,
-            phoneNumber,
-            is_agree
-        });
-        return res.status(200).json({
-            "message" : "SUCCESS"
-        })
-    } catch (error) {
-        console.log(error)
-        return res.status(400).json(error)
-    }
+const signup = async (req, res) => {
+  try {
+    const { name, loginId, password, email, phoneNumber, isAgree } = req.body;
+    await userService.signup({
+      name,
+      loginId,
+      password,
+      email,
+      phoneNumber,
+      isAgree,
+    });
+    return res.status(201).json({
+      message: "SUCCESS",
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json(error);
+  }
 };
 
-const login = async(req, res) => {
-    try {
-        const { login_id, password } = req.body;
-        const token = await userService.login({login_id, password});
-        return res.status(200).json({
-            "message" : "SUCCESS",
-            "accessToken" : token
-        })
-    } catch (error) {
-        console.log(error)
-        return res.status(400).json(error)
-    }
-}
+const login = async (req, res) => {
+  try {
+    const { loginId, password } = req.body;
+    const token = await userService.login({ loginId, password });
+    return res.status(200).json({
+      message: "SUCCESS",
+      accessToken: token,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json(error);
+  }
+};
 
-const checkDuplicateUserID = async(req, res) => {
-    try {
-    const { login_id } = req.body;
+const checkDuplicateUserID = async (req, res) => {
+  try {
+    const { loginId } = req.body;
+    await userService.checkDuplicateUserID({ loginId });
+    return res.status(200).json({
+      message: "SUCCESS",
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json(error);
+  }
+};
 
-    // 아이디 중복 확인
-    const isDuplicate = await userService.checkDuplicateUserID(login_id);
+const createDeliveryAddress = async (req, res) => {
+  try {
+    const { address, detailAddress, zipCode, name, isMain, phoneNumber, subName } = req.body;
+    const foundUser = req.foundUser;
+    const userId = foundUser ? foundUser.id : undefined;
+    await userService.createDeliveryAddress({address, detailAddress, zipCode, name, isMain, userId, phoneNumber, subName});
+    return res.status(200).json({ 
+      message: 'DELIVERY ADDRESS SUCCESS' 
+    });
+  } catch (error) {
+    console.log(error); 
+    return res.status(400).json(error);
+  }
+};
 
-        if (!isDuplicate) {
-            // 아이디가 중복되지 않으면
-            return res.status(200).json({
-              message: "SUCCESS",
-              message: "SUCCESS",
-            });
-          } else {
-            // 아이디가 중복되면
-            return res.status(400).json({
-              message: "DUPLICATE_USERNAME",
-              message: "DUPLICATE_USERNAME",
-            });
-          }
-        } catch (error) {
-          console.error(error);
-          return res.status(400).json({
-            message: "INTERNAL_SERVER_ERROR",
-            message: "INTERNAL_SERVER_ERROR",
-          });
-        }
-}
+const getUserRegistrationData = async (req, res) => {
+  try {
+    const foundUser = req.foundUser;
+    const userId = foundUser ? foundUser.id : undefined;
+    const userData = await userService.getUserRegistrationData(userId);
+    return res.status(200).json({ 
+      message: 'SUCCESS',
+      user: userData
+    });
+  } catch (error) {
+    console.log(error); 
+    return res.status(400).json(error);
+  }
+};
 
 module.exports = {
-    signup,
-    login,
-    checkDuplicateUserID
-  };
+  signup,
+  login,
+  checkDuplicateUserID,
+  createDeliveryAddress,
+  getUserRegistrationData
+};
