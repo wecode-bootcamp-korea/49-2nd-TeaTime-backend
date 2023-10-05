@@ -9,10 +9,9 @@ const findReviewByProductId = async (userId, productId, image, page) => {
   if (!product) throwError(404, "PRODUCT_NOT_FOUND");
 
   const whereQuery = reviewQueryBuilder.whereQuery(image);
-  const whereQueryForCount = reviewQueryBuilder.whereQuery(image, true);
 
   const reviews = await reviewDao.findReviewByProductId(userId, productId, whereQuery, page);
-  const total = await reviewDao.countReviews(whereQueryForCount);
+  const total = await reviewDao.countReviews(productId, whereQuery);
 
   return {
     reviews,

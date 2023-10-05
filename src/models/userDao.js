@@ -66,11 +66,20 @@ const getUserById = async (login_id) => {
   return user;
 };
 
+const updatePoint = async(point, userId) => {
+  await myDataSource.query(`
+    UPDATE users SET point = ? WHERE id = ?
+  `,
+  [point, userId]
+  )
+}
+
 module.exports = { 
   findById,
   getUserByName,
   signupUser,
   getUserByEmail,
   getUserByNumber,
-  getUserById
+  getUserById,
+  updatePoint
  };
