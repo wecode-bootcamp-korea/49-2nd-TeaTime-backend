@@ -27,10 +27,11 @@ const showCartDao1 = async (userId, cartIds) => { // 할인율 체크
         images.image_url,
         products.name,
         products.price,
+        products.discount,
         products.id AS product_id,
         products.discount_id,
         order_details.is_bag,
-        order_details.is_packing
+        order_details.is_package
     FROM
         carts
     LEFT JOIN
@@ -90,20 +91,20 @@ const discountPriceDao = async (productId) => {//체크
 const deleteProductsDao = async (cartIds) => {
 
     await myDataSource.query(`
-        DELETE FROM carts WHERE cart_id IN (?)`,
+        DELETE FROM carts WHERE product_id IN (?)`,
         [cartIds])
 }
 const existingProductsDao = async (userId, productId) => {
 
     await myDataSource.query(`
-        SELECT*FROM carts WHERE user_id =? AND product_id =? 
+        SELECT*FROM carts WHERE user_id =? AND prduct_id =? 
         `, [userId, productId])
 }
-const updateCountDao = async (count, cartId) => {
+const updateCountDao = async (count, productId) => {
 
     await myDataSource.query(`
-    UPDATE carts SET count = ? WHERE cart_id=?
-    `, [count, cartId])// cartid
+    UPDATE carts SET count = ? WHERE id=?
+    `, [count, productId])
 }
 const findCartByIds = async (cartIds, userId) => {
     return await myDataSource.query(`

@@ -5,11 +5,8 @@ const createOrder = async(req, res) => {
   const foundUser = req.foundUser;
   const userId = foundUser ? foundUser.id : undefined;
 
-  console.log("order Id" , userId);
-
   const {
-    payments,
-    totalFee, 
+    totalPrice, 
     isShippingFee, 
     isAgree,
     name, 
@@ -19,15 +16,13 @@ const createOrder = async(req, res) => {
     detailAddress,
     zipCode,
     count,
-    status,
     isBag,
     isPacking,
     productId
   } = req.body;
 
   keyCheck({
-    payments,
-    totalFee, 
+    totalPrice, 
     isShippingFee, 
     isAgree,
     name, 
@@ -37,15 +32,13 @@ const createOrder = async(req, res) => {
     detailAddress,
     zipCode,
     count,
-    status,
     isBag,
     isPacking,
     productId
-  })
+  });
   
-  await orderService.createOrder(
-    payments, 
-    totalFee, 
+  const result = await orderService.createOrder(
+    totalPrice, 
     isShippingFee, 
     isAgree,
     userId,
@@ -56,7 +49,6 @@ const createOrder = async(req, res) => {
     detailAddress, 
     zipCode,
     count,
-    status,
     isBag,
     isPacking,
     productId
@@ -64,6 +56,7 @@ const createOrder = async(req, res) => {
 
   res.status(200).json({
     message: "ORDER_SUCCESS",
+    data : result
   });
 };
 
@@ -72,8 +65,7 @@ const cartOrder = async(req, res) => {
   const userId = foundUser ? foundUser.id : undefined;
 
   const {
-    payments, 
-    totalFee, 
+    totalPrice, 
     isShippingFee, 
     isAgree,
     name, 
@@ -85,9 +77,21 @@ const cartOrder = async(req, res) => {
     cartIds
   } = req.body;
 
-  await orderService.cartOrder(
-    payments, 
-    totalFee, 
+  keyCheck({
+    totalPrice, 
+    isShippingFee, 
+    isAgree,
+    name, 
+    phoneNumber, 
+    email,
+    address, 
+    detailAddress, 
+    zipCode, 
+    cartIds
+  });
+
+  const result = await orderService.cartOrder(
+    totalPrice, 
     isShippingFee, 
     isAgree,
     userId,
@@ -98,10 +102,11 @@ const cartOrder = async(req, res) => {
     detailAddress, 
     zipCode, 
     cartIds
-  )
+  );
 
   res.status(200).json({
     message : "ORDER_SUCCESS",
+    data : result
   });
 };
 
@@ -109,17 +114,54 @@ const getOrderList = async(req, res) => {
   const foundUser = req.foundUser;
   const userId = foundUser ? foundUser.id : undefined;
 
-  console.log("controller userid : ", userId)
   const orderList = await orderService.getOrderList(userId);
-  console.log("list", orderList)
 
   res.status(200).json({
     message : "READ_LIST_SUCCESS",
+    data : orderList
+  });
+};
+
+const createGift = async(req, res) => {
+  const foundUser = req.foundUser;
+  const userId = foundUser ? foundUser.id : undefined;
+
+  const {
+    totalPrice, 
+    isShippingFee, 
+    isAgree, 
+    count, 
+    isBag, 
+    isPacking, 
+    productId,
+    giftName, 
+    giftPhoneNumber, 
+    content
+  } = req.body;
+
+  const result = await orderService.createGift(
+    totalPrice, 
+    isShippingFee, 
+    isAgree, 
+    userId,
+    count, 
+    isBag, 
+    isPacking, 
+    productId,
+    giftName, 
+    giftPhoneNumber, 
+    content
+  );
+
+  res.status(200).json({
+    message : "GIFT_SUCCESS",
+    data : result
   });
 };
 
 module.exports = {
   createOrder,
   getOrderList,
-  cartOrder
+  cartOrder,
+  createGift
 };
