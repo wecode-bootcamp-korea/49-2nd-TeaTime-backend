@@ -84,7 +84,7 @@ const existingProductsDao = async (userId, productId) => {
 const updateCountDao = async (count, cartId) => {
   await myDataSource.query(
     `
-    UPDATE carts SET count = ? WHERE cart_id=?
+    UPDATE carts SET count = ? WHERE id=?
     `,
     [count, cartId],
   ); // cartid
