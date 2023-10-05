@@ -17,13 +17,13 @@ const addCartServices = async (userId, productId, count, isBag, isPacking) => {
 };
 
 const showTotalPriceService = async (userId, cartIds) => {
-  const cartItems = await cartDao.showCartDao(userId, cartIds);
-  // showcart에 가방값,포장값,할인값 추가
-  let total = 0;
-  let productPriceTotal = 0;
-  let productDiscountTotal = 0;
-  let bagPriceTotal = 0;
-  let packagePriceTotal = 0;
+    const cartItems = await cartDao.showCartDao1(userId, cartIds);
+    // showcart에 가방값,포장값,할인값 추가
+    let total = 0;
+    let productPriceTotal = 0;
+    let productDiscountTotal = 0;
+    let bagPriceTotal = 0;
+    let packagePriceTotal = 0;
 
   for (const item of cartItems) {
     const productPrice = item.price;
@@ -49,9 +49,9 @@ const showTotalPriceService = async (userId, cartIds) => {
 };
 
 const showHowManyAtCartSevice = async (userId) => {
-  const cartItems = await cartDao.showCartDao(userId).length;
-  return cartItems;
-};
+    const cartItems = await cartDao.showCartDao2(userId).length;
+    return cartItems
+}
 
 const deleteProductsServices = async (cartIds) => {
   const productIdsToDelete = [cartIds];
@@ -59,13 +59,7 @@ const deleteProductsServices = async (cartIds) => {
 };
 
 const showCartService = async (userId) => {
-  const productInfo = await cartDao.showCartDao(userId);
-  return productInfo;
-};
-module.exports = {
-  addCartServices,
-  deleteProductsServices,
-  showCartService,
-  showTotalPriceService,
-  showHowManyAtCartSevice,
-};
+    const productInfo = await cartDao.showCartDao2(userId)
+    return productInfo
+}
+module.exports = { addCartServices, deleteProductsServices, showCartService, showTotalPriceService, showHowManyAtCartSevice }
