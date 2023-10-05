@@ -49,8 +49,9 @@ const showTotalPriceService = async (userId, cartIds) => {
 };
 
 const showHowManyAtCartSevice = async (userId) => {
-    const cartItems = await cartDao.showCartDao2(userId).length;
-    return cartItems
+    const cartItems = await cartDao.showCartDao2(userId);
+    const cartItemCount = cartItems.length;
+    return cartItemCount;
 }
 
 const deleteProductsServices = async (cartIds) => {
