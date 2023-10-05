@@ -3,9 +3,9 @@ const { deleteProductsDao } = require('../models/cartDao');
 const { throwError } = require("../utils/throwError");
 
 const addCartServices = async (userId, productId, count, isBag, isPacking) => {
-    const existingProducts = await cartDao.existingProductsDao(userId, cartId)
+    const existingProducts = await cartDao.existingProductsDao(userId, productId)
 
-    if (existingProducts.lenght > 0) {
+    if (existingProducts.length > 0) {
         const product = existingProducts[0]
         const newCount = product.count + count
         await cartDao.updateCountDao(newCount, carts.id)
@@ -28,8 +28,8 @@ const showTotalPriceService = async (userId, cartIds) => {
         const productPrice = item.price;
         const productCount = item.count;
         const productDiscount = item.discount_id || 0;
-        const bagPrice = item.is_bag === 'Y' ? 5 : 0;
-        const packagePrice = item.is_package === 'Y' ? 10 : 0;
+        const bagPrice = item.is_bag === 1 ? 100 : 0;
+        const packagePrice = item.is_package === 1 ? 2000 : 0;
 
         productPriceTotal += productPrice * productCount;
         productDiscountTotal += productDiscount * productCount;
@@ -48,7 +48,7 @@ const showTotalPriceService = async (userId, cartIds) => {
 }
 
 const showHowManyAtCartSevice = async (userId) => {
-    const cartItems = await cartDao.showCartDao(userId).lenght;
+    const cartItems = await cartDao.showCartDao(userId).length;
     return cartItems
 }
 
