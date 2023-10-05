@@ -92,7 +92,7 @@ const discountPriceDao = async (productId) => {//체크
 const deleteProductsDao = async (cartIds) => {
 
     await myDataSource.query(`
-        DELETE FROM carts WHERE product_id IN (?)`,
+        DELETE FROM carts WHERE id IN (?)`,
         [cartIds])
 }
 const existingProductsDao = async (userId, productId) => {
