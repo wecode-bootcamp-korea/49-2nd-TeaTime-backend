@@ -138,7 +138,6 @@ const getUserRegistrationData = async (userId) => {
     throwError(400, "KEY_ERROR");
   }
 
-  
   const userData = await userDao.getMainDeliveryAddress(userId);
   const user = await userDao.findById(userId);
 
