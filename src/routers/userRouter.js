@@ -8,5 +8,7 @@ userRouter.post("/login", userController.login);
 userRouter.post("/check-duplicate-userid", userController.checkDuplicateUserID);
 userRouter.post("/delivery", validateToken, userController.createDeliveryAddress);
 userRouter.get("/userInfo", validateToken, userController.getUserRegistrationData);
+userRouter.post("/deliveryUpdate", validateToken, userController.updateDeliveryAddress);
+userRouter.delete("/deliveryDelete", userController.deleteDeliveryAddress);
 
 module.exports = userRouter;

@@ -118,7 +118,7 @@ const createDeliveryAddress = async (body) => {
 
   const isMainValue = isMain ? 1 : 0;
 
-  if (!address || !detailAddress || !zipCode || !name || !userId || !phoneNumber || !subName ) {
+  if (!address || !detailAddress || !zipCode || !name || isMain === undefined || !userId || !phoneNumber || !subName ) {
     throwError(400, "KEY_ERROR");
 }
 
@@ -145,7 +145,39 @@ const getUserRegistrationData = async (userId) => {
       phoneNumber: user.phone_number
   }
 };
-}
+};
+
+const updateDeliveryAddress = async (body,addressId) => {
+  const { address, detailAddress, zipCode, name, isMain, phoneNumber, subName } = body;
+
+  const isMainValue = isMain ? 1 : 0;
+
+  if (!address || !detailAddress || !zipCode || !name || !userId || !phoneNumber || !subName ) {
+    throwError(400, "KEY_ERROR");
+ }
+
+ const existingAddress = await userDao.getDeliveryAddressById(addressId);
+
+  if (!existingAddress) {
+    throwError(404, "ADDRESS_NOT_FOUND");
+  }
+
+  await userDao.updateDeliveryAddress(addressId, address, detailAddress, zipCode, name, isMainValue, phoneNumber, subName);
+};
+
+const deleteDeliveryAddress = async (addressId) => {
+  if (!addressId) {
+    throwError(400, "KEY_ERROR");
+  }
+
+  const existingAddress = await userDao.getDeliveryAddressById(addressId);
+
+  if (!existingAddress) {
+    throwError(404, "ADDRESS_NOT_FOUND");
+  }
+
+  await userDao.deleteDeliveryAddress(deliveryAddressId);
+};
 
 module.exports = {
   findUser,
@@ -154,4 +186,6 @@ module.exports = {
   login,
   createDeliveryAddress,
   getUserRegistrationData,
+  updateDeliveryAddress,
+  deleteDeliveryAddress
 };
