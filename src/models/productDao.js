@@ -149,7 +149,7 @@ const findProductByIdForOrder = async (productId) => {
       p.price,
       i1.image_url AS mainImageUrl,
       d.rate AS discountRate,
-      CAST (p.price - d.rate * p.price / 100 AS SIGNED) AS discountPrice
+      CAST (d.rate * p.price / 100 AS SIGNED) AS discount
     FROM
       products p
     LEFT JOIN 
