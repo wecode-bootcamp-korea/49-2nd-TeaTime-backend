@@ -9,5 +9,6 @@ cartRouter.get("/cartTotal", validateToken, asyncWrap(cartController.showCartPro
 cartRouter.get("/showtotal", validateToken, asyncWrap(cartController.showTotalPriceAtcart));
 cartRouter.post("/add", validateToken, asyncWrap(cartController.addProductAtCart));
 cartRouter.delete("/del", validateToken, asyncWrap(cartController.delProductsAtcart));
+cartRouter.post("/addcount", validateToken, asyncWrap(cartController.justaddCartCount));
 
 module.exports = { cartRouter };
