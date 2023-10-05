@@ -49,7 +49,7 @@ const showCartDao1 = async (userId, cartIds) => {
       LEFT JOIN
         discounts
       ON
-        discounts.product_id = carts.product_id
+        products.discount_id = discounts.id
       WHERE carts.user_id = ? AND carts.id IN (?)
       GROUP BY carts.product_id;
     `, [userId, cartIds]);
@@ -86,9 +86,9 @@ const showCartDao2 = async (userId) => {
         ON
           order_details.product_id = carts.product_id
         LEFT JOIN
-          discounts  -- Add discounts table
+          discounts
         ON
-          discounts.product_id = carts.product_id
+          products.discount_id = discounts.id
         WHERE carts.user_id = ?;
       `, [userId]);
 
