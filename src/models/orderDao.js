@@ -1,7 +1,7 @@
 const {myDataSource} = require('./dataSource');
 
 const createOrder = async (
-  payments, totalFee, isShippingFee, isAgree, userId, name, phoneNumber, email,
+  payments, totalPrice, isShippingFee, isAgree, userId, name, phoneNumber, email,
   address, detailAddress, zipCode,
   count, status, isBag, isPacking, productId
 ) => {
@@ -17,7 +17,7 @@ const createOrder = async (
         phone_number,
         email
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      [payments, totalFee, isShippingFee, isAgree, userId, name, phoneNumber, email]
+      [payments, totalPrice, isShippingFee, isAgree, userId, name, phoneNumber, email]
     );
   
     await transactionManager.query(`
@@ -44,7 +44,7 @@ const createOrder = async (
 };
 
 const cartOrder = async(
-  payments, totalFee, isShippingFee, isAgree, userId, name, phoneNumber, email,
+  payments, totalPrice, isShippingFee, isAgree, userId, name, phoneNumber, email,
   address, detailAddress, zipCode, orders, cartIds
   ) => {
     await myDataSource.transaction(async (transactionManager) => {
@@ -59,7 +59,7 @@ const cartOrder = async(
           phone_number,
           email
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-        [payments, totalFee, isShippingFee, isAgree, userId, name, phoneNumber, email]
+        [payments, totalPrice, isShippingFee, isAgree, userId, name, phoneNumber, email]
       );
     
     await transactionManager.query(`
@@ -97,7 +97,6 @@ const cartOrder = async(
 };
 
 const getOrderList = async(userId) => {
-  console.log("userid",userId)
 
   const result = await myDataSource.query(
     `
@@ -110,7 +109,7 @@ const getOrderList = async(userId) => {
         od.order_id AS orderId,
         o.name,
         o.phone_number AS phoneNumber,
-        o.total_fee AS totalFee,
+        o.total_fee AS totalPrice,
         oa.address,
         oa.detail_address AS detailAddress,
         oa.zip_code AS zipCode,
@@ -127,13 +126,56 @@ const getOrderList = async(userId) => {
     `,
     [userId]
   );
-  console.log("result", result)
 
   return result;
+};
+
+const createGift = async(
+  payments, totalPrice, isShippingFee, isAgree, userId, orderName, orderPhoneNumber, orderEmail,
+  count, status, isBag, isPacking, productId,
+  giftName, giftPhoneNumber, content
+) => {
+  await myDataSource.transaction(async(transactionManager) => {
+    const { insertId:orderId } = await transactionManager.query(`
+      INSERT INTO orders (
+        payments,
+        total_fee,
+        is_shipping_fee,
+        is_agree,
+        user_id,
+        name, 
+        phone_number,
+        email
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      [payments, totalPrice, isShippingFee, isAgree, userId, orderName, orderPhoneNumber, orderEmail]
+    );
+  await transactionManager.query(`
+      INSERT INTO order_details (
+        count,
+        status,
+        is_bag,
+        is_packing,
+        product_id,
+        order_id
+      ) VALUES (?, ?, ?, ?, ?, ?)`,
+      [count, status, isBag, isPacking, productId, orderId]
+    );
+
+  await transactionManager.query(`
+        INSERT INTO gifts (
+          name,
+          phone_number,
+          content,
+          order_id
+        ) VALUES (?, ?, ?, ?)`,
+        [giftName, giftPhoneNumber, content, orderId]
+      );
+  });
 };
 
 module.exports = {
   createOrder,
   getOrderList,
-  cartOrder
+  cartOrder,
+  createGift
 };
